@@ -1,6 +1,22 @@
 <template>
-  <div class="home">
-    <vue-fabric class="canvas" ref="canvas" :width="950" :height="950"></vue-fabric>
+  <div class="page">
+    <el-row type="flex" class="btn-group">
+      <el-button v-if="!isProcessing" type="primary" @click="handleStartProcess">Start</el-button>
+      <el-button v-else type="danger" :disabled="!isProcessing" @click="handleStop">Stop</el-button>
+    </el-row>
+    <div class="container">
+      <div class="panel-right">
+        <el-card>
+          <vue-fabric
+            class="canvas"
+            ref="canvas"
+            :width="950 * this.ratio"
+            :height="950 * this.ratio"/>
+        </el-card>
+      </div>
+      <el-card class="panel-left">
+      </el-card>
+    </div>
   </div>
 </template>
 
@@ -10,34 +26,29 @@ import io from 'socket.io-client';
 
 const socket = io('http://10.10.1.149:5000');
 
-const UNVISIBLE_POINT = [15, 16, 17, 18];
+const VISIBLE_POINT = [0, 2, 3, 4, 9, 10, 11, 22, 23, 24];
 
 const LINE_INDEX = [
-  [0, 1],
-  [1, 2],
-  [1, 5],
-  [1, 8],
+  [0, 2],
+  [2, 9],
   [2, 3],
   [3, 4],
-  [5, 6],
-  [6, 7],
-  [8, 9],
-  [8, 12],
   [9, 10],
-  [12, 13],
   [10, 11],
-  [13, 14],
   [11, 24],
-  [14, 21],
   [11, 22],
-  [14, 19],
   [22, 23],
-  [19, 20],
 ];
 
 export default {
   name: 'home',
   components: {
+  },
+  data() {
+    return {
+      ratio: 0.5,
+      isProcessing: false,
+    };
   },
   mounted() {
     socket.on('connect', () => {
@@ -45,17 +56,18 @@ export default {
     });
 
     socket.on('test', (data) => {
+      if (!this.isProcessing) {
+        return;
+      }
       this.$refs.canvas.clear();
-      this.drawLines(data);
-      data.forEach((point, index) => {
-        if (point[2] > 0 && UNVISIBLE_POINT.indexOf(index) === -1) {
-          const radius = index === 0 ? 30 : 6;
+      const points = data.map(input => [input[0] * this.ratio, input[1] * this.ratio, input[2]]);
+      this.drawLines(points);
+      points.forEach((point, index) => {
+        if (point[2] > 0 && VISIBLE_POINT.indexOf(index) !== -1) {
+          const radius = index === 0 ? 20 : 6;
           this.drawPoint(point[0], point[1], radius);
         }
       });
-    });
-    this.$nextTick(() => {
-      socket.emit('start_process', 'start');
     });
   },
   methods: {
@@ -83,13 +95,31 @@ export default {
         }
       });
     },
+    handleStartProcess() {
+      this.isProcessing = true;
+      socket.emit('start_process', 'start');
+    },
+    handleStop() {
+      this.isProcessing = false;
+    },
   },
 };
 </script>
 <style>
-  .canvas {
-    border: 1px solid #000;
-    width: 950px;
-    height: 950px;
+  .page {
+    padding: 10px;
+  }
+  .btn-group {
+    margin-bottom: 10px;
+  }
+  .container {
+    display: flex;
+    flex-direction: row-reverse;
+  }
+  .panel-right {
+    margin-left: 10px;
+  }
+  .panel-left {
+    flex: 1;
   }
 </style>
