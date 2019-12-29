@@ -25,90 +25,100 @@
     <div class="body">
       <div class="left-panel">
         <div class="left-panel-row" >
-          <el-card shadow="hover" :body-style="resolution.cardStyle">
-            <div class="card-title">
-              <span class="card-title-text">Right Skeleton</span>
-            </div>
+          <skeleton-card
+            class="bike-card"
+            :width="resolution.cardWidth"
+            :height="resolution.cardHeight"
+            title="Right Skeleton"
+          >
             <vue-fabric
               v-if="isShowFabric"
-              class="card_content"
               id="skeleton_right"
               ref="canvas_right"
-              :width="resolution.videoWidth"
-              :height="resolution.videoHeight"
+              :width="resolution.cardWidth"
+              :height="resolution.cardHeight"
             />
-          </el-card>
-          <el-card shadow="hover" :body-style="resolution.cardStyle">
-            <div class="card-title">
-              <span class="card-title-text">Front Skeleton</span>
-            </div>
+          </skeleton-card>
+          <skeleton-card
+            class="bike-card"
+            :width="resolution.cardWidth"
+            :height="resolution.cardHeight"
+            title="Front Skeleton"
+          >
             <vue-fabric
               v-if="isShowFabric"
-              class="card_content"
               id="skeleton_front"
               ref="canvas_front"
-              :width="resolution.videoWidth"
-              :height="resolution.videoHeight"
+              :width="resolution.cardWidth"
+              :height="resolution.cardHeight"
             />
-          </el-card>
-          <el-card shadow="hover" :body-style="resolution.cardStyle">
-            <div class="card-title">
-              <span class="card-title-text">Left Skeleton</span>
-            </div>
+          </skeleton-card>
+          <skeleton-card
+            class="bike-card"
+            :width="resolution.cardWidth"
+            :height="resolution.cardHeight"
+            title="Left Skeleton"
+          >
             <vue-fabric
               v-if="isShowFabric"
-              class="card_content"
               id="skeleton_left"
               ref="canvas_left"
-              :width="resolution.videoWidth"
-              :height="resolution.videoHeight"
+              :width="resolution.cardWidth"
+              :height="resolution.cardHeight"
             />
-          </el-card>
+          </skeleton-card>
         </div>
         <div class="left-panel-row" >
-          <el-card shadow="hover" :body-style="resolution.cardStyle">
-            <div class="card-title">
-              <span class="card-title-text">Right Video</span>
-            </div>
+          <skeleton-card
+            class="bike-card"
+            :width="resolution.cardWidth"
+            :height="resolution.cardHeight"
+            :opacity-title="true"
+            title="Right Video"
+          >
             <canvas
               id="video_right"
-              class="card_content"
-              :width="resolution.videoWidth"
-              :height="resolution.videoHeight"/>
-          </el-card>
-          <el-card shadow="hover" :body-style="resolution.cardStyle">
-            <div class="card-title">
-              <span class="card-title-text">Front Video</span>
-            </div>
+              :width="resolution.cardWidth"
+              :height="resolution.cardHeight"/>
+          </skeleton-card>
+          <skeleton-card
+            class="bike-card"
+            :width="resolution.cardWidth"
+            :height="resolution.cardHeight"
+            :opacity-title="true"
+            title="Front Video"
+          >
             <canvas
               id="video_front"
-              class="card_content"
-              :width="resolution.videoWidth"
-              :height="resolution.videoHeight"/>
-          </el-card>
-          <el-card shadow="hover" :body-style="resolution.cardStyle">
-            <div class="card-title">
-              <span class="card-title-text">Left Video</span>
-            </div>
+              :width="resolution.cardWidth"
+              :height="resolution.cardHeight"/>
+          </skeleton-card>
+          <skeleton-card
+            class="bike-card"
+            :width="resolution.cardWidth"
+            :height="resolution.cardHeight"
+            :opacity-title="true"
+            title="Left Video"
+          >
             <canvas
               id="video_left"
-              class="card_content"
-              :width="resolution.videoWidth"
-              :height="resolution.videoHeight"/>
-          </el-card>
+              :width="resolution.cardWidth"
+              :height="resolution.cardHeight"/>
+          </skeleton-card>
         </div>
       </div>
-      <el-card class="right-panel" shadow="hover">
+      <el-card class="right-panel">
         <el-table
           :data="tableData"
           size="mini"
           :max-height="resolution.tableHeight"
           :span-method="processTableSpan"
           :cell-class-name="processCellClass"
+          :row-style="resolution.tableRowStyle"
           style="width: 100%; height: 100%">
           <el-table-column
             label="Measurement"
-            width="180"
+            width="160"
           >
             <template slot-scope="scope">
               <img :src="scope.row.src" class="bike-icon"/>
@@ -116,6 +126,7 @@
           </el-table-column>
           <el-table-column
             prop="title"
+            width="210"
             label="Measurement Title"
           >
           </el-table-column>
@@ -149,10 +160,13 @@
 // @ is an alias to /src
 import io from 'socket.io-client';
 import VueFabric from '../components/fabric.vue';
+import SkeletonCard from '../components/SkeletonCard.vue';
 
 const CANVA_PREFIX = 'canvas_';
 const VIDEO_PREFIX = '#video_';
 const IMG_PREFIX = 'img_';
+const NA_STR = 'N/A';
+const DEG_STR = 'deg';
 
 const SIDE = {
   LEFT: 'left',
@@ -207,8 +221,20 @@ const LINE_INDEX = {
   ],
 };
 
-const TABLE_HEADER_INDEX = [0];
-const DATA_START_INDEX = [1];
+const TABLE_HEADER_INDEX = [0, 300];
+const DATA_START_INDEX = [];
+// eslint-disable-next-line no-restricted-syntax,no-plusplus
+for (let i = 0; i < TABLE_HEADER_INDEX.length; i++) {
+  if (i === TABLE_HEADER_INDEX.length - 1) {
+    break;
+  }
+  const nextHeaderIndex = TABLE_HEADER_INDEX[i + 1];
+  let temp = i + 1;
+  while (temp < nextHeaderIndex) {
+    DATA_START_INDEX.push(temp);
+    temp += 3;
+  }
+}
 
 const DATA_IMG_INDEX = [];
 
@@ -221,6 +247,7 @@ export default {
   name: 'home',
   components: {
     VueFabric,
+    SkeletonCard,
   },
   data() {
     return {
@@ -228,10 +255,10 @@ export default {
       resolution: {
         originVideoWidth: 360,
         originVideoHeight: 640,
-        videoWidth: 0,
-        videoHeight: 0,
         tableHeight: 0,
-        cardStyle: { padding: '20px', 'background-color': '#2c3e50' },
+        cardWidth: 0,
+        cardHeight: 0,
+        tableRowStyle: { height: '40px' },
       },
       ratio: 1,
       isProcessing: false,
@@ -240,12 +267,7 @@ export default {
         front: new Image(),
         right: new Image(),
       },
-      tableData: [
-        { title: 'Fit Angles' },
-        { src: '../..//static/img/ankle_angle.png', title: 'Ankle Angle Min' },
-        { title: 'Ankle Angle Max' },
-        { title: 'Ankle Angle Range' },
-      ],
+      tableData: this.getFittingData({}),
     };
   },
   mounted() {
@@ -261,7 +283,7 @@ export default {
           const side = SIDE[key];
           this.renderFabric(data, side);
         });
-        this.processAngles(data.angles);
+        this.tableData = this.getFittingData(data.angles);
       });
 
       socket.on('image', (data) => {
@@ -281,21 +303,12 @@ export default {
       const MARGIN_BOTTOM = 40;
       const CARD_PADDING = 40;
       const CARD_MARGIN = 10;
-      const TITLE_HEIGHT = 29;
       const windowHeight = window.innerHeight;
       // eslint-disable-next-line max-len
-      const cardHeight = parseInt((windowHeight - MARGIN_TOP - MARGIN_BOTTOM - CARD_MARGIN) / 2 - CARD_PADDING, 10);
-      const cardWidth = parseInt(9 * cardHeight / 16, 10);
-      this.resolution.cardStyle = {
-        padding: '20px',
-        height: `${cardHeight}px`,
-        width: `${cardWidth}px`,
-        'background-color': '#2c3e50',
-      };
-      this.resolution.videoHeight = cardHeight - TITLE_HEIGHT;
-      this.resolution.videoWidth = parseInt(9 * this.resolution.videoHeight / 16, 10);
+      this.resolution.cardHeight = parseInt((windowHeight - MARGIN_TOP - MARGIN_BOTTOM - CARD_MARGIN) / 2, 10);
+      this.resolution.cardWidth = parseInt(9 * this.resolution.cardHeight / 16, 10);
       this.resolution.tableHeight = windowHeight - MARGIN_BOTTOM - MARGIN_TOP - CARD_PADDING;
-      this.ratio = this.resolution.videoHeight / this.resolution.originVideoHeight;
+      this.ratio = this.resolution.cardHeight / this.resolution.originVideoHeight;
       this.reload();
     },
     clearFabricCanvas() {
@@ -323,7 +336,7 @@ export default {
       this.images[side].src = url;
       this.images[side].onload = () => {
         ctx.drawImage(this.images[side], 0, 0,
-          this.resolution.videoWidth, this.resolution.videoHeight);
+          this.resolution.cardWidth, this.resolution.cardHeight);
       };
     },
     drawPoint(x, y, r, side) {
@@ -353,8 +366,139 @@ export default {
         }
       });
     },
-    processAngles() {
-      // pass
+    getFittingData(angle) {
+      return [
+        { title: 'Fit Angles' }, {
+          src: '../../static/img/ankle_angle.png',
+          title: 'Ankle Angle Min',
+          left: angle.Ankle_Angle_Min_left ? angle.Ankle_Angle_Min_left : NA_STR,
+          right: angle.Ankle_Angle_Min_right ? angle.Ankle_Angle_Min_right : NA_STR,
+          units: DEG_STR,
+          range: '65 to 75',
+        }, {
+          title: 'Ankle Angle Max',
+          left: angle.Ankle_Angle_Max_left ? angle.Ankle_Angle_Max_left : NA_STR,
+          right: angle.Ankle_Angle_Max_right ? angle.Ankle_Angle_Max_right : NA_STR,
+          units: DEG_STR,
+          range: '90 to 100',
+        }, {
+          title: 'Ankle Angle Range',
+          left: angle.Ankle_Angle_Range_left ? angle.Ankle_Angle_Range_left : NA_STR,
+          right: angle.Ankle_Angle_Range_right ? angle.Ankle_Angle_Range_right : NA_STR,
+          units: DEG_STR,
+          range: '20 to 30',
+        }, {
+          src: '../../static/img/ankle_angle_bottom.png',
+        }, {
+          title: 'Ankle Angle At Bottom',
+          left: angle.Ankle_Angle_Bottom_left ? angle.Ankle_Angle_Bottom_left : NA_STR,
+          right: angle.Ankle_Angle_Bottom_right ? angle.Ankle_Angle_Bottom_right : NA_STR,
+          units: DEG_STR,
+          range: '90 to 100',
+        }, {}, {
+          src: '../../static/img/ankle_angle_rear.png',
+        }, {
+          title: 'Ankle Angle At Rear',
+          left: angle.Ankle_Angle_Rear_left ? angle.Ankle_Angle_Rear_left : NA_STR,
+          right: angle.Ankle_Angle_Rear_right ? angle.Ankle_Angle_Rear_right : NA_STR,
+          units: DEG_STR,
+          range: NA_STR,
+        }, {}, {
+          src: '../../static/img/ankle_angle_top.png',
+        }, {
+          title: 'Ankle Angle At Top',
+          left: angle.Ankle_Angle_Top_left ? angle.Ankle_Angle_Top_left : NA_STR,
+          right: angle.Ankle_Angle_Top_right ? angle.Ankle_Angle_Top_right : NA_STR,
+          units: DEG_STR,
+          range: NA_STR,
+        }, {}, {
+          src: '../../static/img/ankle_angle_front.png',
+        }, {
+          title: 'Ankle Angle At Front',
+          left: angle.Ankle_Angle_Forward_left ? angle.Ankle_Angle_Forward_left : NA_STR,
+          right: angle.Ankle_Angle_Forward_right ? angle.Ankle_Angle_Forward_right : NA_STR,
+          units: DEG_STR,
+          range: NA_STR,
+        }, {}, {
+          src: '../../static/img/knee_angle.png',
+          title: 'Knee Angle Flexion',
+          left: angle.Knee_Angle_Flexion_left ? angle.Knee_Angle_Flexion_left : NA_STR,
+          right: angle.Knee_Angle_Flexion_right ? angle.Knee_Angle_Flexion_right : NA_STR,
+          units: DEG_STR,
+          range: '107 to 113',
+        }, {
+          title: 'Knee Angle Extension',
+          left: angle.Knee_Angle_Extension_left ? angle.Knee_Angle_Extension_left : NA_STR,
+          right: angle.Knee_Angle_Extension_right ? angle.Knee_Angle_Extension_right : NA_STR,
+          units: DEG_STR,
+          range: '33 to 42',
+        }, {
+          title: 'Knee Angle Range',
+          left: angle.Knee_Angle_Range_left ? angle.Knee_Angle_Range_left : NA_STR,
+          right: angle.Knee_Angle_Range_right ? angle.Knee_Angle_Range_right : NA_STR,
+          units: DEG_STR,
+          range: '70 to 75',
+        }, {
+          src: '../../static/img/hip_angle.png',
+          title: 'Hip Angle Closed',
+          left: angle.Hip_Angle_Closed_left ? angle.Hip_Angle_Closed_left : NA_STR,
+          right: angle.Hip_Angle_Closed_right ? angle.Hip_Angle_Closed_right : NA_STR,
+          units: DEG_STR,
+          range: '46 to 56',
+        }, {
+          title: 'Hip Angel Open',
+          left: angle.Hip_Angle_Open_left ? angle.Hip_Angle_Open_left : NA_STR,
+          right: angle.Hip_Angle_Open_right ? angle.Hip_Angle_Open_right : NA_STR,
+          units: DEG_STR,
+          range: NA_STR,
+        }, {
+          title: 'Hip Angle Range',
+          left: angle.Hip_Angle_Range_left ? angle.Hip_Angle_Range_left : NA_STR,
+          right: angle.Hip_Angle_Range_right ? angle.Hip_Angle_Range_right : NA_STR,
+          units: DEG_STR,
+          range: '40 to 45',
+        }, {
+          src: '../../static/img/back_from_level.png',
+        }, {
+          title: 'Back Angle',
+          left: angle.Back_From_Level_left ? angle.Back_From_Level_left : NA_STR,
+          right: angle.Back_From_Level_right ? angle.Back_From_Level_right : NA_STR,
+          units: DEG_STR,
+          range: '20 to 35',
+        }, {}, {
+          src: '../../static/img/hip_shoulder_wrist.png',
+        }, {
+          title: 'Shoulder Angle Wrist',
+          left: angle.Hip_Shoulder_Wrist_left ? angle.Hip_Shoulder_Wrist_left : NA_STR,
+          right: angle.Hip_Shoulder_Wrist_right ? angle.Hip_Shoulder_Wrist_right : NA_STR,
+          units: DEG_STR,
+          range: NA_STR,
+        }, {}, {
+          src: '../../static/img/hip_shoulder_elbow.png',
+        }, {
+          title: 'Shoulder Angle Elbow',
+          left: angle.Hip_Shoulder_Elbow_left ? angle.Hip_Shoulder_Elbow_left : NA_STR,
+          right: angle.Hip_Shoulder_Elbow_right ? angle.Hip_Shoulder_Elbow_right : NA_STR,
+          units: DEG_STR,
+          range: '70 to 80',
+        }, {}, {
+          src: '../../static/img/elbow_angle.png',
+        }, {
+          title: 'Elbow Angle',
+          left: angle.Elbow_Angle_left ? angle.Elbow_Angle_left : NA_STR,
+          right: angle.Elbow_Angle_right ? angle.Elbow_Angle_right : NA_STR,
+          units: DEG_STR,
+          range: NA_STR,
+        }, {}, {
+          src: '../../static/img/forearm_from_level.png',
+        }, {
+          title: 'Forearm Angle',
+          left: angle.Forearm_From_Level_left ? angle.Forearm_From_Level_left : NA_STR,
+          right: angle.Forearm_From_Level_right ? angle.Forearm_From_Level_right : NA_STR,
+          units: DEG_STR,
+          range: NA_STR,
+        }, {},
+      ];
     },
     handleStartProcess() {
       this.isProcessing = true;
@@ -464,18 +608,6 @@ export default {
     display: flex;
     flex-direction: row-reverse;
   }
-   .card-title {
-    width: 100%;
-    height: 18px;
-    border-bottom: solid 1px aliceblue;
-  }
-  .card-title .card-title-text {
-    font-size: 16px;
-    font-weight: bolder;
-    color: aliceblue;
-    line-height: 12px;
-    float: left;
-  }
   .left-panel {
     display: flex;
     flex-direction: column;
@@ -486,15 +618,12 @@ export default {
   .left-panel .left-panel-row:not(:first-child) {
     margin-top: 10px;
   }
-  .left-panel-row .el-card{
+  .left-panel-row .bike-card {
     margin-right: 10px;
-  }
-  .card_content {
-    margin-top: 10px;
   }
   .measurement-header {
     background-color: #b9dbff !important;
-    border-radius: 20px !important;
+    border-radius: 10px !important;
     font-weight: bolder;
     padding-left: 20px !important;
     border-bottom-width: 0 !important;
