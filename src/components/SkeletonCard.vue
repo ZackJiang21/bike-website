@@ -66,7 +66,7 @@ export default {
     background-color: #b9dbff;
     border-bottom-right-radius: 8px;
     border-top-right-radius: 8px;
-    z-index: 999;
+    z-index: 900;
   }
   .card-title-opacity {
     position: absolute;
@@ -80,7 +80,7 @@ export default {
     opacity: 0.4;
     border-bottom-right-radius: 8px;
     border-top-right-radius: 8px;
-    z-index: 999;
+    z-index: 900;
   }
   .card-body {
     position: absolute;
