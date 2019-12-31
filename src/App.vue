@@ -10,6 +10,9 @@ export default {
   name: 'app',
   components: {
   },
+  mounted() {
+    window.screen.orientation.lock('portrait');
+  },
 };
 
 </script>
