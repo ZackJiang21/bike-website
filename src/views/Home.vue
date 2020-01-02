@@ -4,6 +4,22 @@
       <img class="header-logo" src="@/assets/Logo-01.svg" />
       <div class="navbar-btn">
         <el-button
+          v-if="!isDefinition"
+          class="bike-btn start-btn"
+          @click="handleShowDef"
+        >
+          Definitions
+          <span class="el-icon-notebook-2"></span>
+        </el-button>
+        <el-button
+          v-if="isDefinition"
+          class="bike-btn start-btn"
+          @click="handleHideDef"
+        >
+          Measurement
+          <span class="el-icon-data-line"></span>
+        </el-button>
+        <el-button
           v-if="!isProcessing"
           type="primary"
           class="bike-btn start-btn"
@@ -108,51 +124,58 @@
         </div>
       </div>
       <el-card class="right-panel">
-        <el-table
-          :data="tableData"
-          size="mini"
-          :max-height="resolution.tableHeight"
-          :span-method="processTableSpan"
-          :cell-class-name="processCellClass"
-          :row-class-name="processRowClass"
-          :row-style="resolution.tableRowStyle"
-          style="width: 100%; height: 100%">
-          <el-table-column
-            label=""
-            width="100"
-          fixed>
-            <template slot-scope="scope">
-              <img :src="scope.row.src" class="bike-icon"/>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="title"
-            width="160"
-            label="Title"
-            fixed
-          >
-          </el-table-column>
-          <el-table-column
-            prop="left"
-            label="Left"
-          >
-          </el-table-column>
-          <el-table-column
-            prop="right"
-            label="Right"
-          >
-          </el-table-column>
-          <el-table-column
-            prop="units"
-            label="Units"
-          >
-          </el-table-column>
-          <el-table-column
-            prop="range"
-            label="Range"
-          >
-          </el-table-column>
-        </el-table>
+        <el-collapse-transition>
+          <div v-show="!isDefinition">
+            <el-table
+              :data="tableData"
+              size="mini"
+              :max-height="resolution.tableHeight"
+              :span-method="processTableSpan"
+              :cell-class-name="processCellClass"
+              :row-class-name="processRowClass"
+              :row-style="resolution.tableRowStyle"
+              style="width: 100%; height: 100%">
+              <el-table-column
+                label=""
+                width="100"
+                fixed>
+                <template slot-scope="scope">
+                  <img :src="scope.row.src" class="bike-icon"/>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="title"
+                width="160"
+                label="Title"
+                fixed
+              >
+              </el-table-column>
+              <el-table-column
+                prop="left"
+                label="Left"
+              >
+              </el-table-column>
+              <el-table-column
+                prop="right"
+                label="Right"
+              >
+              </el-table-column>
+              <el-table-column
+                prop="units"
+                label="Units"
+              >
+              </el-table-column>
+              <el-table-column
+                prop="range"
+                label="Range"
+              >
+              </el-table-column>
+            </el-table>
+          </div>
+        </el-collapse-transition>
+        <el-collapse-transition>
+          <definition-page :max-height="resolution.tableHeight" v-show="isDefinition" />
+        </el-collapse-transition>
       </el-card>
     </div>
   </div>
@@ -163,6 +186,7 @@
 import io from 'socket.io-client';
 import VueFabric from '../components/fabric.vue';
 import SkeletonCard from '../components/SkeletonCard.vue';
+import DefinitionPage from '../components/DefinitionPage.vue';
 
 const CANVA_PREFIX = 'canvas_';
 const VIDEO_PREFIX = '#video_';
@@ -285,9 +309,12 @@ export default {
   components: {
     VueFabric,
     SkeletonCard,
+    DefinitionPage,
   },
   data() {
     return {
+      start: 0,
+      end: 0,
       isShowFabric: true,
       resolution: {
         originVideoWidth: 180,
@@ -299,6 +326,7 @@ export default {
       },
       ratio: 1,
       isProcessing: false,
+      isDefinition: false,
       tableData: this.getFittingData({ angles: {}, distance: {} }),
     };
   },
@@ -319,6 +347,7 @@ export default {
       });
 
       socket.on('image', (data) => {
+        console.log('recv image');
         Object.keys(SIDE).forEach((key) => {
           const side = SIDE[key];
           this.renderVideo(data, side);
@@ -674,6 +703,12 @@ export default {
     handleStop() {
       this.isProcessing = false;
       socket.emit('cancel_process');
+    },
+    handleShowDef() {
+      this.isDefinition = true;
+    },
+    handleHideDef() {
+      this.isDefinition = false;
     },
     processTableSpan(table) {
       // is data header
