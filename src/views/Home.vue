@@ -313,8 +313,6 @@ export default {
   },
   data() {
     return {
-      start: 0,
-      end: 0,
       isShowFabric: true,
       resolution: {
         originVideoWidth: 180,
@@ -332,27 +330,30 @@ export default {
   },
   mounted() {
     socket.on('connect', () => {
-      window.console.log('socket connected');
+      console.log('socket connected');
+    });
 
-      socket.on('points', (data) => {
-        if (!this.isProcessing) {
-          return;
-        }
-        this.clearFabricCanvas();
-        Object.keys(SIDE).forEach((key) => {
-          const side = SIDE[key];
-          this.renderFabric(data, side);
-        });
-        this.tableData = this.getFittingData(data);
+    socket.on('points', (data) => {
+      if (!this.isProcessing) {
+        return;
+      }
+      this.clearFabricCanvas();
+      Object.keys(SIDE).forEach((key) => {
+        const side = SIDE[key];
+        this.renderFabric(data, side);
       });
+      this.tableData = this.getFittingData(data);
+    });
 
-      socket.on('image', (data) => {
-        console.log('recv image');
-        Object.keys(SIDE).forEach((key) => {
-          const side = SIDE[key];
-          this.renderVideo(data, side);
-        });
+    socket.on('image', (data) => {
+      Object.keys(SIDE).forEach((key) => {
+        const side = SIDE[key];
+        this.renderVideo(data, side);
       });
+    });
+
+    socket.on('disconnect', () => {
+      console.log('disconnect');
     });
 
     this.$nextTick(this.calculateHeight);
