@@ -5,11 +5,14 @@
     size="mini"
     :max-height="maxHeight"
     style="width: 100%; height: 100%"
-    :row-style="{height: '200px'}"
+    :row-class-name="getRowClass"
     >
       <el-table-column label="Key" width="250">
         <template slot-scope="scope">
-          <div class="def-img-container">
+          <div v-if="!scope.row.isSkeleton" class="def-img-container">
+            <img :src="scope.row.image" class="bike-icon">
+          </div>
+          <div v-else>
             <img :src="scope.row.image" class="bike-icon">
           </div>
         </template>
@@ -28,6 +31,8 @@
   </div>
 </template>
 <script>
+import KeyPointImg from '../assets/keypoints_pose_25.jpg';
+
 export default {
   name: 'DefinitionPage',
   props: {
@@ -36,9 +41,23 @@ export default {
       required: true,
     },
   },
+  methods: {
+    getRowClass({ row }) {
+      if (row.isSkeleton) {
+        return 'skeleton-row';
+      }
+      return 'def-row';
+    },
+  },
   data() {
     return {
       definitions: [{
+        image: KeyPointImg,
+        isSkeleton: true,
+        definition: {
+          'Illustration of Skeleton': '',
+        },
+      }, {
         image: '../../static/img/ankle_angle.png',
         definition: {
           'Ankle Minimum': 'Maximum dorsiflexion at any point in the pedal stroke defined by the knee-ankle line and the heel-foot-line.',
@@ -130,7 +149,7 @@ export default {
         image: '../../static/img/hip_lateral_travel.png',
         definition: { 'Hip Lateral Travel': 'The magnitude of the lateral movement of the hip' },
       }, {
-        image: '../../static/img/cadence.png',
+        image: '../../static/img/thigh_length.png',
         definition: {
           'Thigh Length': 'The length of the hip/knee segment',
           'Shin Length': 'The length of the knee/ankle segment',
@@ -141,12 +160,23 @@ export default {
           'Hip to Elbow Vertical': 'The vertical offset of the elbow relative to the hip marker.',
           'Hip to Elbow Horizontal': 'The horizontal offset of the elbow relative to the hip marker',
         },
+      }, {
+        image: '../../static/img/marker_path.png',
+        definition: {
+          'Front View of Knee Path': 'Knee tracking measurement; green is downstroke; red is upstroke. The blue cone represents +/- 3 degrees on the knee travel tilt angle.',
+        },
       }],
     };
   },
 };
 </script>
 <style scoped>
+  .skeleton-img-container {
+    overflow: hidden;
+    position: relative;
+    width: 300px;
+    height: 520px;
+  }
   .def-img-container {
     overflow: hidden;
     position: relative;
@@ -160,5 +190,13 @@ export default {
   }
   .def-content {
     word-break: break-word;
+  }
+</style>
+<style>
+  .skeleton-row {
+    height: 400px;
+  }
+  .def-row {
+    height: 200px;
   }
 </style>

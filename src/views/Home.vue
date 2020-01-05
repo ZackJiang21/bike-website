@@ -1,6 +1,7 @@
 <template>
   <div class="page">
     <div class="header">
+      <img class="header-logo" src="@/assets/g42-logo.svg" />
       <img class="header-logo" src="@/assets/Logo-01.svg" />
       <div class="navbar-btn">
         <el-button
@@ -35,6 +36,7 @@
           :round="true"
          @click="handleStop">
           Stop
+          <span class="el-icon-switch-button"></span>
         </el-button>
       </div>
     </div>
@@ -150,10 +152,15 @@
                 fixed
               >
               </el-table-column>
-              <el-table-column
-                prop="left"
-                label="Left"
-              >
+              <el-table-column label="Left">
+                <template slot-scope="scope">
+                  <div v-if="scope.row.isKneePath">
+                    <canvas id="knee_path" width="180px" height="320px"></canvas>
+                  </div>
+                  <span v-else>
+                    {{scope.row.left}}
+                  </span>
+                </template>
               </el-table-column>
               <el-table-column
                 prop="right"
@@ -283,7 +290,9 @@ const LINE_INDEX = {
   ],
 };
 
-const TABLE_HEADER_INDEX = [0, 37, 50, 300];
+const DATA_FIELD_NUM = 4;
+
+const TABLE_HEADER_INDEX = [0, 37, 50, 63, 300];
 const DATA_START_INDEX = [];
 // eslint-disable-next-line no-restricted-syntax,no-plusplus
 for (let i = 0; i < TABLE_HEADER_INDEX.length; i++) {
@@ -349,6 +358,16 @@ export default {
       Object.keys(SIDE).forEach((key) => {
         const side = SIDE[key];
         this.renderVideo(data, side);
+
+        const url = `data:image/jpeg;base64,${data.img_knee_path}`;
+        const ctx = document.querySelector('#knee_path').getContext('2d');
+
+        const image = new Image();
+        image.src = url;
+        image.onload = () => {
+          ctx.drawImage(image, 0, 0,
+            this.resolution.cardWidth, this.resolution.cardHeight);
+        };
       });
     });
 
@@ -577,7 +596,7 @@ export default {
           right: this.getFittingValue(angles, 'Hip_Shoulder_Elbow', 'right'),
           warning: this.getFittingValue(angles, 'Hip_Shoulder_Elbow', 'left_exceed_range') || this.getFittingValue(angles, 'Hip_Shoulder_Elbow', 'right_exceed_range'),
           units: DEG_STR,
-          range: '70 to 80',
+          range: NA_STR,
         }, {
           title: 'Shoulder Angle Elbow Mean',
           // eslint-disable-next-line max-len
@@ -586,7 +605,7 @@ export default {
           right: this.getFittingValue(angles, 'Hip_Shoulder_Elbow_Average', 'right'),
           warning: this.getFittingValue(angles, 'Hip_Shoulder_Elbow_Average', 'left_exceed_range') || this.getFittingValue(angles, 'Hip_Shoulder_Elbow_Average', 'right_exceed_range'),
           units: DEG_STR,
-          range: '70 to 80',
+          range: NA_STR,
         }, {}, {
           src: '../../static/img/elbow_angle.png',
           title: 'Elbow Angle',
@@ -594,14 +613,14 @@ export default {
           right: this.getFittingValue(angles, 'Elbow_Angle', 'right'),
           warning: this.getFittingValue(angles, 'Elbow_Angle', 'left_exceed_range') || this.getFittingValue(angles, 'Elbow_Angle', 'right_exceed_range'),
           units: DEG_STR,
-          range: NA_STR,
+          range: '70 to 80',
         }, {
           title: 'Elbow Angle Mean',
           left: this.getFittingValue(angles, 'Elbow_Angle_Average', 'left'),
           right: this.getFittingValue(angles, 'Elbow_Angle_Average', 'right'),
           warning: this.getFittingValue(angles, 'Elbow_Angle_Average', 'left_exceed_range') || this.getFittingValue(angles, 'Elbow_Angle_Average', 'right_exceed_range'),
           units: DEG_STR,
-          range: NA_STR,
+          range: '70 to 80',
         }, {}, {
           src: '../../static/img/forearm_from_level.png',
           title: 'Forearm Angle',
@@ -695,6 +714,12 @@ export default {
           units: 'mm',
           range: '5 to 20',
         }, {},
+        { title: 'Marker Path' }, {
+          src: '../../static/img/marker_path.png',
+          title: 'Front View of Knee Path',
+          left: 11,
+          isKneePath: true,
+        },
       ];
     },
     handleStartProcess() {
@@ -712,6 +737,25 @@ export default {
       this.isDefinition = false;
     },
     processTableSpan(table) {
+      // is Knee Path
+      if (table.row.isKneePath) {
+        if (table.columnIndex === 1 || table.columnIndex === 0) {
+          return {
+            rowspan: 3,
+            colspan: 1,
+          };
+        }
+        if (table.columnIndex === 2) {
+          return {
+            rowspan: 3,
+            colspan: DATA_FIELD_NUM,
+          };
+        }
+        return {
+          rowspan: 0,
+          colspan: 0,
+        };
+      }
       // is data header
       if (TABLE_HEADER_INDEX.indexOf(table.rowIndex) > -1) {
         if (table.columnIndex === 1) {
@@ -795,9 +839,11 @@ export default {
     box-sizing: border-box;
   }
   .header-logo {
+    display: inline-block;
     float: left;
-    width: 200px;
-    padding: 5px 0;
+    height: 60px;
+    padding: 8px 0;
+    margin-left: 20px;
   }
   .navbar-btn {
     display: inline-block;
