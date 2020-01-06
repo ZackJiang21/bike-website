@@ -136,6 +136,7 @@
               :cell-class-name="processCellClass"
               :row-class-name="processRowClass"
               :row-style="resolution.tableRowStyle"
+              border
               style="width: 100%; height: 100%">
               <el-table-column
                 label=""
@@ -153,28 +154,54 @@
               >
               </el-table-column>
               <el-table-column label="Left">
-                <template slot-scope="scope">
-                  <div v-if="scope.row.isKneePath">
-                    <canvas id="knee_path" width="180px" height="320px"></canvas>
-                  </div>
-                  <span v-else>
-                    {{scope.row.left}}
-                  </span>
-                </template>
+                <el-table-column label="Max Less">
+                  <template slot-scope="scope">
+                      <div v-if="scope.row.isKneePath">
+                        <canvas id="knee_path" width="180px" height="320px"></canvas>
+                      </div>
+                      <span v-else>
+                      {{scope.row.lessLeft}}
+                    </span>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="left"
+                  label="Current"
+                >
+                </el-table-column>
+                <el-table-column
+                  prop="moreLeft"
+                  label="Max More"
+                >
+                </el-table-column>
               </el-table-column>
               <el-table-column
-                prop="right"
                 label="Right"
+              >
+                <el-table-column
+                  prop="lessRight"
+                  label="Max Less"
+                >
+                </el-table-column>
+                <el-table-column
+                  prop="right"
+                  label="Current"
+                >
+                </el-table-column>
+                <el-table-column
+                  prop="moreRight"
+                  label="Max More"
+                >
+                </el-table-column>
+              </el-table-column>
+              <el-table-column
+                prop="range"
+                label="Range"
               >
               </el-table-column>
               <el-table-column
                 prop="units"
                 label="Units"
-              >
-              </el-table-column>
-              <el-table-column
-                prop="range"
-                label="Range"
               >
               </el-table-column>
             </el-table>
@@ -290,7 +317,7 @@ const LINE_INDEX = {
   ],
 };
 
-const DATA_FIELD_NUM = 4;
+const DATA_FIELD_NUM = 8;
 
 const TABLE_HEADER_INDEX = [0, 37, 50, 63, 300];
 const DATA_START_INDEX = [];
@@ -343,9 +370,6 @@ export default {
     });
 
     socket.on('points', (data) => {
-      if (!this.isProcessing) {
-        return;
-      }
       this.clearFabricCanvas();
       Object.keys(SIDE).forEach((key) => {
         const side = SIDE[key];
@@ -446,11 +470,11 @@ export default {
         }
       });
     },
-    getFittingValue(object, key, secondKey) {
-      if (!object[key]) {
-        return NA_STR;
+    getFittingValue(object, key, secondKey, isBool) {
+      if (object[key] && object[key][secondKey]) {
+        return object[key][secondKey];
       }
-      return object[key] ? object[key][secondKey] : NA_STR;
+      return isBool ? false : NA_STR;
     },
     getFittingData(data) {
       const { angles, distance } = data;
@@ -459,22 +483,34 @@ export default {
           src: '../../static/img/ankle_angle.png',
           title: 'Ankle Angle Min',
           left: this.getFittingValue(angles, 'Ankle_Angle_Min', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Ankle_Angle_Min', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Ankle_Angle_Min', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Ankle_Angle_Min', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Ankle_Angle_Min', 'right_more_than_range'),
           right: this.getFittingValue(angles, 'Ankle_Angle_Min', 'right'),
-          warning: this.getFittingValue(angles, 'Ankle_Angle_Min', 'left_exceed_range') || this.getFittingValue(angles, 'Ankle_Angle_Min', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Ankle_Angle_Min', 'left_exceed_range', true) || this.getFittingValue(angles, 'Ankle_Angle_Min', 'right_exceed_range', true),
           units: DEG_STR,
           range: '65 to 75',
         }, {
           title: 'Ankle Angle Max',
           left: this.getFittingValue(angles, 'Ankle_Angle_Max', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Ankle_Angle_Max', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Ankle_Angle_Max', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Ankle_Angle_Max', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Ankle_Angle_Max', 'right_more_than_range'),
           right: this.getFittingValue(angles, 'Ankle_Angle_Max', 'right'),
-          warning: this.getFittingValue(angles, 'Ankle_Angle_Max', 'left_exceed_range') || this.getFittingValue(angles, 'Ankle_Angle_Max', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Ankle_Angle_Max', 'left_exceed_range', true) || this.getFittingValue(angles, 'Ankle_Angle_Max', 'right_exceed_range', true),
           units: DEG_STR,
           range: '90 to 100',
         }, {
           title: 'Ankle Angle Range',
           left: this.getFittingValue(angles, 'Ankle_Angle_Range', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Ankle_Angle_Range', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Ankle_Angle_Range', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Ankle_Angle_Range', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Ankle_Angle_Range', 'right_more_than_range'),
           right: this.getFittingValue(angles, 'Ankle_Angle_Range', 'right'),
-          warning: this.getFittingValue(angles, 'Ankle_Angle_Range', 'left_exceed_range') || this.getFittingValue(angles, 'Ankle_Angle_Range', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Ankle_Angle_Range', 'left_exceed_range', true) || this.getFittingValue(angles, 'Ankle_Angle_Range', 'right_exceed_range', true),
           units: DEG_STR,
           range: '20 to 30',
         }, {
@@ -482,8 +518,12 @@ export default {
         }, {
           title: 'Ankle Angle At Bottom',
           left: this.getFittingValue(angles, 'Ankle_Angle_Bottom', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Ankle_Angle_Bottom', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Ankle_Angle_Bottom', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Ankle_Angle_Bottom', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Ankle_Angle_Bottom', 'right_more_than_range'),
           right: this.getFittingValue(angles, 'Ankle_Angle_Bottom', 'right'),
-          warning: this.getFittingValue(angles, 'Ankle_Angle_Bottom', 'left_exceed_range') || this.getFittingValue(angles, 'Ankle_Angle_Bottom', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Ankle_Angle_Bottom', 'left_exceed_range', true) || this.getFittingValue(angles, 'Ankle_Angle_Bottom', 'right_exceed_range', true),
           units: DEG_STR,
           range: '90 to 100',
         }, {}, {
@@ -491,8 +531,12 @@ export default {
         }, {
           title: 'Ankle Angle At Rear',
           left: this.getFittingValue(angles, 'Ankle_Angle_Rear', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Ankle_Angle_Rear', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Ankle_Angle_Rear', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Ankle_Angle_Rear', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Ankle_Angle_Rear', 'right_more_than_range'),
           right: this.getFittingValue(angles, 'Ankle_Angle_Rear', 'right'),
-          warning: this.getFittingValue(angles, 'Ankle_Angle_Rear', 'left_exceed_range') || this.getFittingValue(angles, 'Ankle_Angle_Rear', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Ankle_Angle_Rear', 'left_exceed_range', true) || this.getFittingValue(angles, 'Ankle_Angle_Rear', 'right_exceed_range', true),
           units: DEG_STR,
           range: NA_STR,
         }, {}, {
@@ -500,8 +544,12 @@ export default {
         }, {
           title: 'Ankle Angle At Top',
           left: this.getFittingValue(angles, 'Ankle_Angle_Top', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Ankle_Angle_Top', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Ankle_Angle_Top', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Ankle_Angle_Top', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Ankle_Angle_Top', 'right_more_than_range'),
           right: this.getFittingValue(angles, 'Ankle_Angle_Top', 'right'),
-          warning: this.getFittingValue(angles, 'Ankle_Angle_Top', 'left_exceed_range') || this.getFittingValue(angles, 'Ankle_Angle_Top', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Ankle_Angle_Top', 'left_exceed_range', true) || this.getFittingValue(angles, 'Ankle_Angle_Top', 'right_exceed_range', true),
           units: DEG_STR,
           range: NA_STR,
         }, {}, {
@@ -509,133 +557,201 @@ export default {
         }, {
           title: 'Ankle Angle At Front',
           left: this.getFittingValue(angles, 'Ankle_Angle_Forward', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Ankle_Angle_Forward', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Ankle_Angle_Forward', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Ankle_Angle_Forward', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Ankle_Angle_Forward', 'right_more_than_range'),
           right: this.getFittingValue(angles, 'Ankle_Angle_Forward', 'right'),
-          warning: this.getFittingValue(angles, 'Ankle_Angle_Forward', 'left_exceed_range') || this.getFittingValue(angles, 'Ankle_Angle_Forward', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Ankle_Angle_Forward', 'left_exceed_range', true) || this.getFittingValue(angles, 'Ankle_Angle_Forward', 'right_exceed_range', true),
           units: DEG_STR,
           range: NA_STR,
         }, {}, {
           src: '../../static/img/knee_angle.png',
           title: 'Knee Angle Flexion',
           left: this.getFittingValue(angles, 'Knee_Angle_Max', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Knee_Angle_Max', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Knee_Angle_Max', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Knee_Angle_Max', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Knee_Angle_Max', 'right_more_than_range'),
           right: this.getFittingValue(angles, 'Knee_Angle_Max', 'right'),
-          warning: this.getFittingValue(angles, 'Knee_Angle_Max', 'left_exceed_range') || this.getFittingValue(angles, 'Knee_Angle_Max', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Knee_Angle_Max', 'left_exceed_range', true) || this.getFittingValue(angles, 'Knee_Angle_Max', 'right_exceed_range', true),
           units: DEG_STR,
           range: '107 to 113',
         }, {
           title: 'Knee Angle Extension',
           left: this.getFittingValue(angles, 'Knee_Angle_Min', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Knee_Angle_Min', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Knee_Angle_Min', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Knee_Angle_Min', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Knee_Angle_Min', 'right_more_than_range'),
           right: this.getFittingValue(angles, 'Knee_Angle_Min', 'right'),
-          warning: this.getFittingValue(angles, 'Knee_Angle_Min', 'left_exceed_range') || this.getFittingValue(angles, 'Knee_Angle_Min', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Knee_Angle_Min', 'left_exceed_range', true) || this.getFittingValue(angles, 'Knee_Angle_Min', 'right_exceed_range', true),
           units: DEG_STR,
           range: '33 to 42',
         }, {
           title: 'Knee Angle Range',
           left: this.getFittingValue(angles, 'Knee_Angle_Range', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Knee_Angle_Range', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Knee_Angle_Range', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Knee_Angle_Range', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Knee_Angle_Range', 'right_more_than_range'),
           right: this.getFittingValue(angles, 'Knee_Angle_Range', 'right'),
-          warning: this.getFittingValue(angles, 'Knee_Angle_Range', 'left_exceed_range') || this.getFittingValue(angles, 'Knee_Angle_Range', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Knee_Angle_Range', 'left_exceed_range', true) || this.getFittingValue(angles, 'Knee_Angle_Range', 'right_exceed_range', true),
           units: DEG_STR,
           range: '70 to 75',
         }, {
           src: '../../static/img/hip_angle.png',
           title: 'Hip Angle Closed',
           left: this.getFittingValue(angles, 'Hip_Angle_Min', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Hip_Angle_Min', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Hip_Angle_Min', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Hip_Angle_Min', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Hip_Angle_Min', 'right_more_than_range'),
           right: this.getFittingValue(angles, 'Hip_Angle_Min', 'right'),
-          warning: this.getFittingValue(angles, 'Hip_Angle_Min', 'left_exceed_range') || this.getFittingValue(angles, 'Hip_Angle_Min', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Hip_Angle_Min', 'left_exceed_range', true) || this.getFittingValue(angles, 'Hip_Angle_Min', 'right_exceed_range', true),
           units: DEG_STR,
           range: '46 to 56',
         }, {
           title: 'Hip Angel Open',
           left: this.getFittingValue(angles, 'Hip_Angle_Max', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Hip_Angle_Max', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Hip_Angle_Max', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Hip_Angle_Max', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Hip_Angle_Max', 'right_more_than_range'),
           right: this.getFittingValue(angles, 'Hip_Angle_Max', 'right'),
-          warning: this.getFittingValue(angles, 'Hip_Angle_Max', 'left_exceed_range') || this.getFittingValue(angles, 'Hip_Angle_Max', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Hip_Angle_Max', 'left_exceed_range', true) || this.getFittingValue(angles, 'Hip_Angle_Max', 'right_exceed_range', true),
           units: DEG_STR,
           range: NA_STR,
         }, {
           title: 'Hip Angle Range',
           left: this.getFittingValue(angles, 'Hip_Angle_Range', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Hip_Angle_Range', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Hip_Angle_Range', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Hip_Angle_Range', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Hip_Angle_Range', 'right_more_than_range'),
           right: this.getFittingValue(angles, 'Hip_Angle_Range', 'right'),
-          warning: this.getFittingValue(angles, 'Hip_Angle_Range', 'left_exceed_range') || this.getFittingValue(angles, 'Hip_Angle_Range', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Hip_Angle_Range', 'left_exceed_range', true) || this.getFittingValue(angles, 'Hip_Angle_Range', 'right_exceed_range', true),
           units: DEG_STR,
           range: '40 to 45',
         }, {
           src: '../../static/img/back_from_level.png',
           title: 'Back From Level',
           left: this.getFittingValue(angles, 'Back_From_Level', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Back_From_Level', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Back_From_Level', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Back_From_Level', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Back_From_Level', 'right_more_than_range'),
           right: this.getFittingValue(angles, 'Back_From_Level', 'right'),
-          warning: this.getFittingValue(angles, 'Back_From_Level', 'left_exceed_range') || this.getFittingValue(angles, 'Back_From_Level', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Back_From_Level', 'left_exceed_range', true) || this.getFittingValue(angles, 'Back_From_Level', 'right_exceed_range', true),
           units: DEG_STR,
           range: '20 to 35',
         }, {
           title: 'Back From Level Mean',
           left: this.getFittingValue(angles, 'Back_From_Level_Average', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Back_From_Level_Average', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Back_From_Level_Average', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Back_From_Level_Average', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Back_From_Level_Average', 'right_more_than_range'),
           right: this.getFittingValue(angles, 'Back_From_Level_Average', 'right'),
-          warning: this.getFittingValue(angles, 'Back_From_Level_Average', 'left_exceed_range') || this.getFittingValue(angles, 'Back_From_Level_Average', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Back_From_Level_Average', 'left_exceed_range', true) || this.getFittingValue(angles, 'Back_From_Level_Average', 'right_exceed_range', true),
           units: DEG_STR,
           range: '20 to 35',
         }, {}, {
           src: '../../static/img/hip_shoulder_wrist.png',
           title: 'Shoulder Angle Wrist',
           left: this.getFittingValue(angles, 'Hip_Shoulder_Wrist', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Hip_Shoulder_Wrist', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Hip_Shoulder_Wrist', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Hip_Shoulder_Wrist', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Hip_Shoulder_Wrist', 'right_more_than_range'),
           right: this.getFittingValue(angles, 'Hip_Shoulder_Wrist', 'right'),
-          warning: this.getFittingValue(angles, 'Hip_Shoulder_Wrist', 'left_exceed_range') || this.getFittingValue(angles, 'Hip_Shoulder_Wrist', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Hip_Shoulder_Wrist', 'left_exceed_range', true) || this.getFittingValue(angles, 'Hip_Shoulder_Wrist', 'right_exceed_range', true),
           units: DEG_STR,
           range: NA_STR,
         }, {
           title: 'Shoulder Angle Wrist Mean',
           // eslint-disable-next-line max-len
           left: this.getFittingValue(angles, 'Hip_Shoulder_Wrist_Average', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Hip_Shoulder_Wrist_Average', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Hip_Shoulder_Wrist_Average', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Hip_Shoulder_Wrist_Average', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Hip_Shoulder_Wrist_Average', 'right_more_than_range'),
           // eslint-disable-next-line max-len
           right: this.getFittingValue(angles, 'Hip_Shoulder_Wrist_Average', 'right'),
-          warning: this.getFittingValue(angles, 'Hip_Shoulder_Wrist_Average', 'left_exceed_range') || this.getFittingValue(angles, 'Hip_Shoulder_Wrist_Average', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Hip_Shoulder_Wrist_Average', 'left_exceed_range', true) || this.getFittingValue(angles, 'Hip_Shoulder_Wrist_Average', 'right_exceed_range', true),
           units: DEG_STR,
           range: NA_STR,
         }, {}, {
           src: '../../static/img/hip_shoulder_elbow.png',
           title: 'Shoulder Angle Elbow',
           left: this.getFittingValue(angles, 'Hip_Shoulder_Elbow', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Hip_Shoulder_Elbow', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Hip_Shoulder_Elbow', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Hip_Shoulder_Elbow', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Hip_Shoulder_Elbow', 'right_more_than_range'),
           right: this.getFittingValue(angles, 'Hip_Shoulder_Elbow', 'right'),
-          warning: this.getFittingValue(angles, 'Hip_Shoulder_Elbow', 'left_exceed_range') || this.getFittingValue(angles, 'Hip_Shoulder_Elbow', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Hip_Shoulder_Elbow', 'left_exceed_range', true) || this.getFittingValue(angles, 'Hip_Shoulder_Elbow', 'right_exceed_range', true),
           units: DEG_STR,
-          range: NA_STR,
+          range: '70 to 80',
         }, {
           title: 'Shoulder Angle Elbow Mean',
           // eslint-disable-next-line max-len
           left: this.getFittingValue(angles, 'Hip_Shoulder_Elbow_Average', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Hip_Shoulder_Elbow_Average', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Hip_Shoulder_Elbow_Average', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Hip_Shoulder_Elbow_Average', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Hip_Shoulder_Elbow_Average', 'right_more_than_range'),
           // eslint-disable-next-line max-len
           right: this.getFittingValue(angles, 'Hip_Shoulder_Elbow_Average', 'right'),
-          warning: this.getFittingValue(angles, 'Hip_Shoulder_Elbow_Average', 'left_exceed_range') || this.getFittingValue(angles, 'Hip_Shoulder_Elbow_Average', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Hip_Shoulder_Elbow_Average', 'left_exceed_range', true) || this.getFittingValue(angles, 'Hip_Shoulder_Elbow_Average', 'right_exceed_range', true),
           units: DEG_STR,
-          range: NA_STR,
+          range: '70 to 80',
         }, {}, {
           src: '../../static/img/elbow_angle.png',
           title: 'Elbow Angle',
           left: this.getFittingValue(angles, 'Elbow_Angle', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Elbow_Angle', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Elbow_Angle', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Elbow_Angle', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Elbow_Angle', 'right_more_than_range'),
           right: this.getFittingValue(angles, 'Elbow_Angle', 'right'),
-          warning: this.getFittingValue(angles, 'Elbow_Angle', 'left_exceed_range') || this.getFittingValue(angles, 'Elbow_Angle', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Elbow_Angle', 'left_exceed_range', true) || this.getFittingValue(angles, 'Elbow_Angle', 'right_exceed_range', true),
           units: DEG_STR,
-          range: '70 to 80',
+          range: NA_STR,
         }, {
           title: 'Elbow Angle Mean',
           left: this.getFittingValue(angles, 'Elbow_Angle_Average', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Elbow_Angle_Average', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Elbow_Angle_Average', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Elbow_Angle_Average', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Elbow_Angle_Average', 'right_more_than_range'),
           right: this.getFittingValue(angles, 'Elbow_Angle_Average', 'right'),
-          warning: this.getFittingValue(angles, 'Elbow_Angle_Average', 'left_exceed_range') || this.getFittingValue(angles, 'Elbow_Angle_Average', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Elbow_Angle_Average', 'left_exceed_range', true) || this.getFittingValue(angles, 'Elbow_Angle_Average', 'right_exceed_range', true),
           units: DEG_STR,
-          range: '70 to 80',
+          range: NA_STR,
         }, {}, {
           src: '../../static/img/forearm_from_level.png',
           title: 'Forearm Angle',
           left: this.getFittingValue(angles, 'Forearm_From_Level', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Forearm_From_Level', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Forearm_From_Level', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Forearm_From_Level', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Forearm_From_Level', 'right_more_than_range'),
           right: this.getFittingValue(angles, 'Forearm_From_Level', 'right'),
-          warning: this.getFittingValue(angles, 'Forearm_From_Level', 'left_exceed_range') || this.getFittingValue(angles, 'Forearm_From_Level', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Forearm_From_Level', 'left_exceed_range', true) || this.getFittingValue(angles, 'Forearm_From_Level', 'right_exceed_range', true),
           units: DEG_STR,
           range: NA_STR,
         }, {
           title: 'Forearm From Level Mean',
           // eslint-disable-next-line max-len
           left: this.getFittingValue(angles, 'Forearm_From_Level_Average', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Forearm_From_Level_Average', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Forearm_From_Level_Average', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Forearm_From_Level_Average', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Forearm_From_Level_Average', 'right_more_than_range'),
           // eslint-disable-next-line max-len
           right: this.getFittingValue(angles, 'Forearm_From_Level_Average', 'right'),
-          warning: this.getFittingValue(angles, 'Forearm_From_Level_Average', 'left_exceed_range') || this.getFittingValue(angles, 'Forearm_From_Level_Average', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Forearm_From_Level_Average', 'left_exceed_range', true) || this.getFittingValue(angles, 'Forearm_From_Level_Average', 'right_exceed_range', true),
           units: DEG_STR,
           range: NA_STR,
         }, {},
@@ -678,15 +794,23 @@ export default {
           src: '../../static/img/foot_from_level.png',
           title: 'Foot from Level',
           left: this.getFittingValue(angles, 'Foot_From_Level', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Foot_From_Level', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Foot_From_Level', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Foot_From_Level', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Foot_From_Level', 'right_more_than_range'),
           right: this.getFittingValue(angles, 'Foot_From_Level', 'right'),
-          warning: this.getFittingValue(angles, 'Foot_From_Level', 'left_exceed_range') || this.getFittingValue(angles, 'Foot_From_Level', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Foot_From_Level', 'left_exceed_range', true) || this.getFittingValue(angles, 'Foot_From_Level', 'right_exceed_range', true),
           units: 'mm',
           range: NA_STR,
         }, {
           title: 'Foot from Level Mean',
           left: this.getFittingValue(angles, 'Foot_From_Level_Average', 'left'),
+          lessLeft: this.getFittingValue(angles, 'Foot_From_Level_Average', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(angles, 'Foot_From_Level_Average', 'left_more_than_range'),
+          lessRight: this.getFittingValue(angles, 'Foot_From_Level_Average', 'right_less_than_range'),
+          moreRight: this.getFittingValue(angles, 'Foot_From_Level_Average', 'right_more_than_range'),
           right: this.getFittingValue(angles, 'Foot_From_Level_Average', 'right'),
-          warning: this.getFittingValue(angles, 'Foot_From_Level_Average', 'left_exceed_range') || this.getFittingValue(angles, 'Foot_From_Level_Average', 'right_exceed_range'),
+          warning: this.getFittingValue(angles, 'Foot_From_Level_Average', 'left_exceed_range', true) || this.getFittingValue(angles, 'Foot_From_Level_Average', 'right_exceed_range', true),
           units: 'mm',
           range: NA_STR,
         }, {}, {
@@ -717,7 +841,6 @@ export default {
         { title: 'Marker Path' }, {
           src: '../../static/img/marker_path.png',
           title: 'Front View of Knee Path',
-          left: 11,
           isKneePath: true,
         },
       ];
@@ -761,7 +884,7 @@ export default {
         if (table.columnIndex === 1) {
           return {
             rowspan: 1,
-            colspan: 6,
+            colspan: DATA_FIELD_NUM + 2,
           };
         }
         return {
@@ -884,7 +1007,7 @@ export default {
   .img-container {
     overflow: hidden;
     position: relative;
-    width: 126px;
+    width: 90px;
     height: 90px;
     background-color: #fff !important;
   }
