@@ -16,7 +16,7 @@ export default {
           fromIndex: true,
         },
       });
-    }, 3000);
+    }, 4000);
   },
 };
 </script>

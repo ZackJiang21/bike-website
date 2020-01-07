@@ -366,7 +366,7 @@ export default {
   },
   mounted() {
     socket.on('connect', () => {
-      console.log('socket connected');
+      window.console.log('socket connected');
     });
 
     socket.on('points', (data) => {
@@ -396,7 +396,7 @@ export default {
     });
 
     socket.on('disconnect', () => {
-      console.log('disconnect');
+      window.console.log('disconnect');
     });
 
     this.$nextTick(this.calculateHeight);
