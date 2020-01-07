@@ -1,8 +1,8 @@
 <template>
   <div class="page">
     <div class="header">
-      <img class="header-logo" src="@/assets/g42-logo.svg" />
-      <img class="header-logo" src="@/assets/Logo-01.svg" />
+      <img class="header-logo" src="@/assets/g42-logo.svg"/>
+      <img class="header-logo" src="@/assets/Logo-01.svg"/>
       <div class="navbar-btn">
         <el-button
           v-if="!isDefinition"
@@ -34,7 +34,7 @@
           class="bike-btn"
           :disabled="!isProcessing"
           :round="true"
-         @click="handleStop">
+          @click="handleStop">
           Stop
           <span class="el-icon-switch-button"></span>
         </el-button>
@@ -42,7 +42,7 @@
     </div>
     <div class="body">
       <div class="left-panel">
-        <div class="left-panel-row" >
+        <div class="left-panel-row">
           <skeleton-card
             class="bike-card"
             :width="resolution.cardWidth"
@@ -86,7 +86,7 @@
             />
           </skeleton-card>
         </div>
-        <div class="left-panel-row" >
+        <div class="left-panel-row">
           <skeleton-card
             class="bike-card"
             :width="resolution.cardWidth"
@@ -156,10 +156,10 @@
               <el-table-column label="Left">
                 <el-table-column label="Max Less">
                   <template slot-scope="scope">
-                      <div v-if="scope.row.isKneePath">
-                        <canvas id="knee_path" width="180px" height="320px"></canvas>
-                      </div>
-                      <span v-else>
+                    <div v-if="scope.row.isKneePath">
+                      <canvas id="knee_path" width="180px" height="320px"></canvas>
+                    </div>
+                    <span v-else>
                       {{scope.row.lessLeft}}
                     </span>
                   </template>
@@ -208,7 +208,7 @@
           </div>
         </el-collapse-transition>
         <el-collapse-transition>
-          <definition-page :max-height="resolution.tableHeight" v-show="isDefinition" />
+          <definition-page :max-height="resolution.tableHeight" v-show="isDefinition"/>
         </el-collapse-transition>
       </el-card>
     </div>
@@ -238,7 +238,10 @@ const socket = io.connect('http://10.10.1.105:5000', { transports: ['websocket']
 
 const VISIBLE_POINT = {
   right: {
-    0: { color: '#d70067', radius: 14 },
+    0: {
+      color: '#d70067',
+      radius: 14,
+    },
     2: { color: '#d64700' },
     3: { color: '#d6a300' },
     4: { color: '#d7d600' },
@@ -248,7 +251,10 @@ const VISIBLE_POINT = {
     22: { color: '#00efef' },
   },
   left: {
-    0: { color: '#d70067', radius: 14 },
+    0: {
+      color: '#d70067',
+      radius: 14,
+    },
     5: { color: '#8fd500' },
     6: { color: '#33d602' },
     7: { color: '#00d600' },
@@ -258,7 +264,10 @@ const VISIBLE_POINT = {
     19: { color: '#1000d6' },
   },
   front: {
-    0: { color: '#d70067', radius: 14 },
+    0: {
+      color: '#d70067',
+      radius: 14,
+    },
     2: { color: '#d64700' },
     3: { color: '#d6a300' },
     4: { color: '#d7d600' },
@@ -280,40 +289,130 @@ const VISIBLE_POINT = {
 
 const LINE_INDEX = {
   right: [
-    { line: [0, 2], color: '#990033' },
-    { line: [2, 9], color: '#990001' },
-    { line: [2, 3], color: '#996601' },
-    { line: [3, 4], color: '#989900' },
-    { line: [9, 10], color: '#019966' },
-    { line: [10, 11], color: '#009999' },
-    { line: [11, 22], color: '#009999' },
+    {
+      line: [0, 2],
+      color: '#990033',
+    },
+    {
+      line: [2, 9],
+      color: '#990001',
+    },
+    {
+      line: [2, 3],
+      color: '#996601',
+    },
+    {
+      line: [3, 4],
+      color: '#989900',
+    },
+    {
+      line: [9, 10],
+      color: '#019966',
+    },
+    {
+      line: [10, 11],
+      color: '#009999',
+    },
+    {
+      line: [11, 22],
+      color: '#009999',
+    },
   ],
   left: [
-    { line: [0, 5], color: '#990033' },
-    { line: [12, 5], color: '#990001' },
-    { line: [6, 5], color: '#339901' },
-    { line: [6, 7], color: '#009901' },
-    { line: [12, 13], color: '#003399' },
-    { line: [13, 14], color: '#080099' },
-    { line: [14, 19], color: '#080099' },
+    {
+      line: [0, 5],
+      color: '#990033',
+    },
+    {
+      line: [12, 5],
+      color: '#990001',
+    },
+    {
+      line: [6, 5],
+      color: '#339901',
+    },
+    {
+      line: [6, 7],
+      color: '#009901',
+    },
+    {
+      line: [12, 13],
+      color: '#003399',
+    },
+    {
+      line: [13, 14],
+      color: '#080099',
+    },
+    {
+      line: [14, 19],
+      color: '#080099',
+    },
   ],
   front: [
-    { line: [0, 1], color: '#990033' },
-    { line: [1, 2], color: '#993300' },
-    { line: [1, 5], color: '#679900' },
-    { line: [2, 3], color: '#996601' },
-    { line: [3, 4], color: '#989900' },
-    { line: [5, 6], color: '#339901' },
-    { line: [6, 7], color: '#009901' },
-    { line: [1, 8], color: '#990001' },
-    { line: [9, 8], color: '#009933' },
-    { line: [12, 8], color: '#006699' },
-    { line: [9, 10], color: '#019966' },
-    { line: [11, 10], color: '#009999' },
-    { line: [12, 13], color: '#003399' },
-    { line: [13, 14], color: '#080099' },
-    { line: [11, 22], color: '#009999' },
-    { line: [19, 14], color: '#080099' },
+    {
+      line: [0, 1],
+      color: '#990033',
+    },
+    {
+      line: [1, 2],
+      color: '#993300',
+    },
+    {
+      line: [1, 5],
+      color: '#679900',
+    },
+    {
+      line: [2, 3],
+      color: '#996601',
+    },
+    {
+      line: [3, 4],
+      color: '#989900',
+    },
+    {
+      line: [5, 6],
+      color: '#339901',
+    },
+    {
+      line: [6, 7],
+      color: '#009901',
+    },
+    {
+      line: [1, 8],
+      color: '#990001',
+    },
+    {
+      line: [9, 8],
+      color: '#009933',
+    },
+    {
+      line: [12, 8],
+      color: '#006699',
+    },
+    {
+      line: [9, 10],
+      color: '#019966',
+    },
+    {
+      line: [11, 10],
+      color: '#009999',
+    },
+    {
+      line: [12, 13],
+      color: '#003399',
+    },
+    {
+      line: [13, 14],
+      color: '#080099',
+    },
+    {
+      line: [11, 22],
+      color: '#009999',
+    },
+    {
+      line: [19, 14],
+      color: '#080099',
+    },
   ],
 };
 
@@ -356,12 +455,18 @@ export default {
         tableHeight: 0,
         cardWidth: 0,
         cardHeight: 0,
-        tableRowStyle: { height: '30px', 'font-size': '10px' },
+        tableRowStyle: {
+          height: '30px',
+          'font-size': '10px',
+        },
       },
       ratio: 1,
       isProcessing: false,
       isDefinition: false,
-      tableData: this.getFittingData({ angles: {}, distance: {} }),
+      tableData: this.getFittingData({
+        angles: {},
+        distance: {},
+      }),
     };
   },
   mounted() {
@@ -371,28 +476,31 @@ export default {
 
     socket.on('points', (data) => {
       this.clearFabricCanvas();
-      Object.keys(SIDE).forEach((key) => {
-        const side = SIDE[key];
-        this.renderFabric(data, side);
-      });
+      Object.keys(SIDE)
+        .forEach((key) => {
+          const side = SIDE[key];
+          this.renderFabric(data, side);
+        });
       this.tableData = this.getFittingData(data);
     });
 
     socket.on('image', (data) => {
-      Object.keys(SIDE).forEach((key) => {
-        const side = SIDE[key];
-        this.renderVideo(data, side);
+      Object.keys(SIDE)
+        .forEach((key) => {
+          const side = SIDE[key];
+          this.renderVideo(data, side);
 
-        const url = `data:image/jpeg;base64,${data.img_knee_path}`;
-        const ctx = document.querySelector('#knee_path').getContext('2d');
+          const url = `data:image/jpeg;base64,${data.img_knee_path}`;
+          const ctx = document.querySelector('#knee_path')
+            .getContext('2d');
 
-        const image = new Image();
-        image.src = url;
-        image.onload = () => {
-          ctx.drawImage(image, 0, 0,
-            this.resolution.cardWidth, this.resolution.cardHeight);
-        };
-      });
+          const image = new Image();
+          image.src = url;
+          image.onload = () => {
+            ctx.drawImage(image, 0, 0,
+              this.resolution.cardWidth, this.resolution.cardHeight);
+          };
+        });
     });
 
     socket.on('disconnect', () => {
@@ -417,9 +525,10 @@ export default {
       this.reload();
     },
     clearFabricCanvas() {
-      Object.keys(SIDE).forEach((key) => {
-        this.$refs[CANVA_PREFIX + SIDE[key]].clear();
-      });
+      Object.keys(SIDE)
+        .forEach((key) => {
+          this.$refs[CANVA_PREFIX + SIDE[key]].clear();
+        });
     },
     renderFabric(data, side) {
       const points = data[side].map(input => [
@@ -433,7 +542,8 @@ export default {
     },
     renderVideo(data, side) {
       const url = `data:image/jpeg;base64,${data[IMG_PREFIX + side]}`;
-      const ctx = document.querySelector(VIDEO_PREFIX + side).getContext('2d');
+      const ctx = document.querySelector(VIDEO_PREFIX + side)
+        .getContext('2d');
 
       const image = new Image();
       image.src = url;
@@ -456,7 +566,7 @@ export default {
     drawLines(points, side) {
       LINE_INDEX[side].forEach((lineIndex) => {
         if (points[lineIndex.line[0]] && points[lineIndex.line[1]]
-          && points[lineIndex.line[0]][2] && points[lineIndex.line[1]][2]) {
+            && points[lineIndex.line[0]][2] && points[lineIndex.line[1]][2]) {
           this.$refs[CANVA_PREFIX + side].drawDottedline({
             x: points[lineIndex.line[0]][0],
             y: points[lineIndex.line[0]][1],
@@ -927,7 +1037,9 @@ export default {
     },
     reload() {
       this.isShowFabric = false;
-      this.$nextTick(() => { this.isShowFabric = true; });
+      this.$nextTick(() => {
+        this.isShowFabric = true;
+      });
     },
   },
 };
@@ -936,19 +1048,23 @@ export default {
   html {
     background-color: #f3f3f5;
   }
+
   .page {
     height: 100%;
   }
+
   .bike-btn {
     border-radius: 10px !important;
     padding: 12px 23px;
     font-size: 16px !important;
   }
+
   .start-btn {
     background-color: #66b1ff !important;
     border-color: #66b1ff !important;
     color: #2b3e4e !important;
   }
+
   .header {
     height: 80px;
     width: 100%;
@@ -961,6 +1077,7 @@ export default {
     z-index: 999;
     box-sizing: border-box;
   }
+
   .header-logo {
     display: inline-block;
     float: left;
@@ -968,35 +1085,43 @@ export default {
     padding: 8px 0;
     margin-left: 20px;
   }
+
   .navbar-btn {
     display: inline-block;
     line-height: 80px;
     float: right;
     vertical-align: middle;
   }
+
   .body {
     margin-top: 100px;
     display: flex;
     flex-direction: row;
     padding: 0 20px;
   }
+
   .left-panel-row {
     display: flex;
     flex-direction: row-reverse;
   }
+
   .left-panel {
     display: flex;
     flex-direction: column;
   }
+
   .right-panel {
     flex: 1;
   }
+
   .left-panel .left-panel-row:not(:first-child) {
     margin-top: 10px;
   }
+
   .left-panel-row .bike-card {
     margin-right: 10px;
   }
+
   .measurement-header {
     background-color: #b9dbff !important;
     border-radius: 10px !important;
@@ -1004,6 +1129,7 @@ export default {
     padding-left: 20px !important;
     border-bottom-width: 0 !important;
   }
+
   .img-container {
     overflow: hidden;
     position: relative;
@@ -1011,6 +1137,7 @@ export default {
     height: 90px;
     background-color: #fff !important;
   }
+
   .bike-icon {
     position: absolute;
     top: 0;
@@ -1021,9 +1148,11 @@ export default {
     max-width: 100%;
     max-height: 100%;
   }
+
   .bike-table-cell {
     padding: 3px 0 !important;
   }
+
   .el-table .warning-row {
     background: oldlace;
   }
