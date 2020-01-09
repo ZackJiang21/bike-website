@@ -30,9 +30,7 @@
         <el-button
           v-else
           type="danger"
-          class="bike-btn"
           :disabled="!isProcessing"
-          :round="true"
           @click="handleStop">
           Stop
           <span class="el-icon-switch-button"></span>
@@ -1050,18 +1048,6 @@ export default {
 
   .page {
     height: 100%;
-  }
-
-  .bike-btn {
-    border-radius: 10px !important;
-    padding: 12px 23px;
-    font-size: 16px !important;
-  }
-
-  .start-btn {
-    background-color: #66b1ff !important;
-    border-color: #66b1ff !important;
-    color: #2b3e4e !important;
   }
 
   .header {
