@@ -6,15 +6,15 @@
       <div class="navbar-btn">
         <el-button
           v-if="!isDefinition"
-          class="bike-btn start-btn"
           @click="handleShowDef"
+          type="primary"
         >
           Definitions
           <span class="el-icon-notebook-2"></span>
         </el-button>
         <el-button
           v-if="isDefinition"
-          class="bike-btn start-btn"
+          type="primary"
           @click="handleHideDef"
         >
           Measurement
@@ -23,7 +23,6 @@
         <el-button
           v-if="!isProcessing"
           type="primary"
-          class="bike-btn start-btn"
           @click="handleStartProcess">
           Get Started
           <span class="el-icon-caret-right"></span>
