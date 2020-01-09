@@ -126,8 +126,8 @@
         </div>
       </div>
       <el-card class="right-panel">
-        <el-collapse-transition>
-          <div v-show="!isDefinition">
+        <transition name="slide-fade">
+          <div v-if="!isDefinition" class="right-panel-item" key="measurement">
             <el-table
               :data="tableData"
               size="mini"
@@ -206,10 +206,10 @@
               </el-table-column>
             </el-table>
           </div>
-        </el-collapse-transition>
-        <el-collapse-transition>
-          <definition-page :max-height="resolution.tableHeight" v-show="isDefinition"/>
-        </el-collapse-transition>
+          <div v-else class="right-panel-item" key="definition">
+            <definition-page :max-height="resolution.tableHeight"/>
+          </div>
+        </transition>
       </el-card>
     </div>
   </div>
@@ -222,7 +222,7 @@ import VueFabric from '../components/fabric.vue';
 import SkeletonCard from '../components/SkeletonCard.vue';
 import DefinitionPage from '../components/DefinitionPage.vue';
 
-const CANVA_PREFIX = 'canvas_';
+const CANVAS_PREFIX = 'canvas_';
 const VIDEO_PREFIX = '#video_';
 const IMG_PREFIX = 'img_';
 const NA_STR = '--';
@@ -527,7 +527,7 @@ export default {
     clearFabricCanvas() {
       Object.keys(SIDE)
         .forEach((key) => {
-          this.$refs[CANVA_PREFIX + SIDE[key]].clear();
+          this.$refs[CANVAS_PREFIX + SIDE[key]].clear();
         });
     },
     renderFabric(data, side) {
@@ -554,7 +554,7 @@ export default {
     },
     drawPoint(point, attr, side) {
       const radius = attr.radius ? attr.radius : 3;
-      this.$refs[CANVA_PREFIX + side].createCircle({
+      this.$refs[CANVAS_PREFIX + side].createCircle({
         left: point[0] - radius,
         top: point[1] - radius,
         fillColor: attr.color,
@@ -567,7 +567,7 @@ export default {
       LINE_INDEX[side].forEach((lineIndex) => {
         if (points[lineIndex.line[0]] && points[lineIndex.line[1]]
             && points[lineIndex.line[0]][2] && points[lineIndex.line[1]][2]) {
-          this.$refs[CANVA_PREFIX + side].drawDottedline({
+          this.$refs[CANVAS_PREFIX + side].drawDottedline({
             x: points[lineIndex.line[0]][0],
             y: points[lineIndex.line[0]][1],
             x1: points[lineIndex.line[1]][0],
@@ -1111,6 +1111,7 @@ export default {
   }
 
   .right-panel {
+    position: relative;
     flex: 1;
   }
 
@@ -1155,5 +1156,22 @@ export default {
 
   .el-table .warning-row {
     background: oldlace;
+  }
+
+  .slide-fade-enter-active, .slide-fade-leave-active {
+    transition: all .5s ease;
+  }
+
+  .slide-fade-enter, .slide-fade-leave-to
+    /* .slide-fade-leave-active for below version 2.1.8 */ {
+    transform: translateX(200px);
+    opacity: 0;
+  }
+  .right-panel-item {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    bottom: 20px;
+    right: 20px;
   }
 </style>
