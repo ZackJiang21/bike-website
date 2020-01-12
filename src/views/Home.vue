@@ -6,7 +6,7 @@
       <div class="navbar-btn">
         <el-button
           v-if="!isDefinition"
-          @click="handleShowDef"
+          @click="onShowDef"
           type="primary"
         >
           Definitions
@@ -23,7 +23,8 @@
         <el-button
           v-if="!isProcessing"
           type="primary"
-          @click="handleStartProcess">
+          @click="handleStartProcess"
+          :disabled="!hasUserInfo">
           Get Started
           <span class="el-icon-caret-right"></span>
         </el-button>
@@ -34,6 +35,14 @@
           @click="handleStop">
           Stop
           <span class="el-icon-switch-button"></span>
+        </el-button>
+        <el-button
+          v-if="!isShowLogIn"
+          type="primary"
+          @click="onShowLogIn"
+        >
+          Log In
+          <span class="el-icon-user-solid"></span>
         </el-button>
       </div>
     </div>
@@ -124,7 +133,13 @@
       </div>
       <el-card class="right-panel">
         <transition name="slide-fade">
-          <div v-if="!isDefinition" class="right-panel-item" key="measurement">
+          <div v-if="isShowLogIn" class="right-panel-item" key="login">
+            <log-in-page
+              :max-height="resolution.tableHeight"
+              @log-in-back="onLogInBack">
+            </log-in-page>
+          </div>
+          <div v-else-if="!isDefinition" class="right-panel-item" key="measurement">
             <el-table
               :data="tableData"
               size="mini"
@@ -218,6 +233,7 @@ import io from 'socket.io-client';
 import VueFabric from '../components/fabric.vue';
 import SkeletonCard from '../components/SkeletonCard.vue';
 import DefinitionPage from '../components/DefinitionPage.vue';
+import LogInPage from '../components/LogInPage.vue';
 
 const CANVAS_PREFIX = 'canvas_';
 const VIDEO_PREFIX = '#video_';
@@ -442,6 +458,7 @@ export default {
     VueFabric,
     SkeletonCard,
     DefinitionPage,
+    LogInPage,
   },
   data() {
     return {
@@ -464,6 +481,8 @@ export default {
         angles: {},
         distance: {},
       }),
+      hasUserInfo: false,
+      isShowLogIn: false,
     };
   },
   mounted() {
@@ -508,6 +527,13 @@ export default {
     window.onresize = this.calculateHeight;
   },
   methods: {
+    onShowLogIn() {
+      this.isDefinition = false;
+      this.isShowLogIn = true;
+    },
+    onLogInBack() {
+      this.isShowLogIn = false;
+    },
     calculateHeight() {
       const MARGIN_TOP = 100;
       const MARGIN_BOTTOM = 40;
@@ -960,7 +986,8 @@ export default {
       this.isProcessing = false;
       socket.emit('cancel_process');
     },
-    handleShowDef() {
+    onShowDef() {
+      this.isShowLogIn = false;
       this.isDefinition = true;
     },
     handleHideDef() {
