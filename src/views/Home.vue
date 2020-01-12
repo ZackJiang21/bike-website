@@ -10,7 +10,7 @@
           type="primary"
         >
           Definitions
-          <span class="el-icon-notebook-2"></span>
+          <span class="el-icon-notebook-2 el-icon--right"></span>
         </el-button>
         <el-button
           v-if="isDefinition"
@@ -18,7 +18,7 @@
           @click="handleHideDef"
         >
           Measurement
-          <span class="el-icon-data-line"></span>
+          <span class="el-icon-data-line el-icon--right"></span>
         </el-button>
         <el-button
           v-if="!isProcessing"
@@ -26,7 +26,7 @@
           @click="handleStartProcess"
           :disabled="!hasUserInfo">
           Get Started
-          <span class="el-icon-caret-right"></span>
+          <span class="el-icon-caret-right el-icon--right"></span>
         </el-button>
         <el-button
           v-else
@@ -34,7 +34,7 @@
           :disabled="!isProcessing"
           @click="handleStop">
           Stop
-          <span class="el-icon-switch-button"></span>
+          <span class="el-icon-switch-button el-icon--right"></span>
         </el-button>
         <el-button
           v-if="!isShowLogIn"
@@ -42,7 +42,7 @@
           @click="onShowLogIn"
         >
           Log In
-          <span class="el-icon-user-solid"></span>
+          <span class="el-icon-user-solid el-icon--right"></span>
         </el-button>
       </div>
     </div>
