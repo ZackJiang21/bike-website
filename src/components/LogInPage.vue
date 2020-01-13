@@ -16,6 +16,7 @@
     <div v-show="stepActive===1">
       <bike-page
         :max-height="maxHeight"
+        :user-id="userId"
         @select-bike-event="onSelectBike"
         @create-event="onCreateEvent">
       </bike-page>
@@ -53,6 +54,8 @@ import BikePage from './BikePage.vue';
 
 const FINAL_STEP = 1;
 
+const UNSELECT_USER_ID = -1;
+
 export default {
   name: 'LogInPage',
   props: {
@@ -71,7 +74,7 @@ export default {
   data() {
     return {
       stepActive: 0,
-      userId: '',
+      userId: UNSELECT_USER_ID,
       bikeId: '',
       isShowBtn: true,
     };

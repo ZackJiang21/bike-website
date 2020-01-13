@@ -82,13 +82,13 @@
         <el-form-item label="Name" prop="name" required>
           <el-input
             v-model="createUser.name"
-            minlength="3"
             maxlength="64"
           ></el-input>
         </el-form-item>
         <el-form-item label="Age" prop="age" required>
           <el-input
             v-model="createUser.age"
+            maxlength="4"
             type="number"
           ></el-input>
         </el-form-item>
@@ -102,12 +102,19 @@
           </el-select>
         </el-form-item>
         <el-form-item label="Phone" prop="phone" required>
-          <el-input v-model="createUser.phone" type="number">
+          <el-input
+            v-model="createUser.phone"
+            maxlength="32"
+            type="number">
             <template slot="prepend">+971</template>
           </el-input>
         </el-form-item>
-        <el-form-item label="Email" prop="email" required>
-          <el-input v-model="createUser.email"></el-input>
+        <el-form-item
+          label="Email"
+          prop="email" required>
+          <el-input
+            maxlength="128"
+            v-model="createUser.email"></el-input>
         </el-form-item>
         <el-form-item size="large">
           <div class="form-btn">
@@ -256,7 +263,6 @@ export default {
     onSubmit() {
       this.$refs.createUserForm.validate((valid) => {
         if (valid) {
-          console.log(this.createUser);
           addUser(this.createUser).then(() => {
             this.backToTable();
             this.getUserData();

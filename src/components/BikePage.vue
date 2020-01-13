@@ -44,10 +44,11 @@
             prop="type">
           </el-table-column>
           <el-table-column label="Operation" width="110" fixed="right">
-            <template>
+            <template slot-scope="scope">
               <el-button
                 type="danger"
                 size="mini"
+                @click="onDelBike(scope.row.id)"
                 plain>
                 Delete<i class="el-icon-delete el-icon--right"/>
               </el-button>
@@ -59,24 +60,57 @@
     <div v-else class="create-form">
       <el-form
         :model="createBike"
+        :rules="bikeRule"
+        ref="createBikeForm"
         label-position="left"
         label-width="100px">
-        <el-form-item label="Model">
-          <el-input v-model="createBike.model"></el-input>
+        <el-form-item
+          label="Model"
+          prop="model"
+          required>
+          <el-input
+            v-model="createBike.model"
+            maxlength="32"
+          >
+          </el-input>
         </el-form-item>
-        <el-form-item label="Size">
-          <el-input v-model="createBike.size"></el-input>
+        <el-form-item label="Size" prop="size" required>
+          <el-input
+            v-model="createBike.size"
+            maxlenght="16"
+          >
+          </el-input>
         </el-form-item>
-        <el-form-item label="Year">
-          <el-input v-model="createBike.year"></el-input>
+        <el-form-item label="Year" prop="year" required>
+          <el-date-picker
+            v-model="createBike.year"
+            type="year"
+            value-format="yyyy"
+            placeholder="Pick a year"
+            style="width: 100%"
+          >
+          </el-date-picker>
         </el-form-item>
-        <el-form-item label="Type">
-          <el-input v-model="createBike.type"></el-input>
+        <el-form-item
+          label="Type"
+          prop="type"
+          required>
+          <el-input
+            v-model="createBike.type"
+            maxlength="16"
+          >
+          </el-input>
         </el-form-item>
         <el-form-item size="large">
           <div class="form-btn">
             <el-button @click="onCancelCreate" plain>Cancel</el-button>
-            <el-button type="primary" plain>Create</el-button>
+            <el-button
+              type="primary"
+              @click="onSubmit"
+              plain
+            >
+              Create
+            </el-button>
           </div>
         </el-form-item>
       </el-form>
@@ -84,6 +118,15 @@
   </div>
 </template>
 <script>
+import { getBikesByUserId, addBike, deleteBikeById } from '../api/bike';
+
+const DEFAULT_FORM = {
+  model: '',
+  year: '',
+  size: '',
+  type: '',
+};
+
 export default {
   name: 'BikePage',
   props: {
@@ -91,20 +134,23 @@ export default {
       type: Number,
       required: true,
     },
+    userId: {
+      type: Number,
+      required: true,
+    },
   },
   data() {
     return {
-      createBike: {
-        model: '',
-        year: '',
-        size: '',
-        type: '',
-      },
+      createBike: Object.assign({}, DEFAULT_FORM),
       isCreateBike: false,
-      bikeData: [{
-        id: 1, model: 'Boardman,9.9Air', size: 'M 54', year: '2017', type: 'Triathlon',
-      }],
+      bikeData: [],
       selectedId: '',
+      bikeRule: {
+        model: [{ required: true, message: 'Model is a mandatory field', trigger: 'blur' }],
+        size: [{ required: true, message: 'Size is a mandatory field', trigger: 'blur' }],
+        year: [{ required: true, message: 'Year is a mandatory field', trigger: 'blur' }],
+        type: [{ required: true, message: 'Type is a mandatory field', trigger: 'blur' }],
+      },
     };
   },
   computed: {
@@ -116,17 +162,59 @@ export default {
       return this.maxHeight - stepHeight - headerHeight - btnGrpHeight - bottomHeight;
     },
   },
+  watch: {
+    userId(userId) {
+      getBikesByUserId(userId).then((res) => {
+        this.bikeData = res;
+      });
+    },
+  },
   methods: {
+    backToTable() {
+      this.isCreateBike = false;
+      this.$emit('create-event', false);
+    },
+    getBikeData() {
+      getBikesByUserId(this.userId).then((data) => {
+        this.bikeData = data;
+      });
+    },
     onCreateBikeBtn() {
       this.isCreateBike = true;
       this.$emit('create-event', true);
     },
     onCancelCreate() {
-      this.isCreateBike = false;
-      this.$emit('create-event', false);
+      this.backToTable();
     },
     onSelectBike(bikeId) {
       this.$emit('select-bike-event', bikeId);
+    },
+    onSubmit() {
+      this.$refs.createBikeForm.validate((valid) => {
+        if (valid) {
+          addBike(this.createBike, this.userId).then(() => {
+            this.backToTable();
+            this.getBikeData();
+          });
+        }
+      });
+    },
+    onDelBike(bikeId) {
+      this.$confirm('This will permanently delete the bike. Continue?', 'Warning', {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning',
+      }).then(() => {
+        deleteBikeById(bikeId).then(() => {
+          this.$message({
+            type: 'success',
+            message: 'Delete completed',
+          });
+          this.getBikeData();
+        });
+      }).catch(() => {
+        console.log('delete canceled');
+      });
     },
   },
 };
