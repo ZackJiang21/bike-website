@@ -41,8 +41,8 @@
           </el-table-column>
           <el-table-column
             label="Gender"
-            prop="gender"
-            width="70">
+            prop="genderStr"
+            width="80">
           </el-table-column>
           <el-table-column
             label="Phone"
@@ -55,10 +55,11 @@
             show-overflow-tooltip>
           </el-table-column>
           <el-table-column label="Operation" width="110" fixed="right">
-            <template>
+            <template slot-scope="scope">
               <el-button
                 type="danger"
                 size="mini"
+                @click="onDelUser(scope.row.id)"
                 plain>
                 Delete<i class="el-icon-delete el-icon--right"/>
               </el-button>
@@ -70,33 +71,47 @@
     <div v-else class="create-form">
       <el-form
         :model="createUser"
+        :rules="userRule"
+        ref="createUserForm"
         label-position="left"
         label-width="100px">
-        <el-form-item label="Name">
-          <el-input v-model="createUser.name"></el-input>
+        <el-form-item label="Name" prop="name" required>
+          <el-input
+            v-model="createUser.name"
+            minlength="3"
+            maxlength="64"
+          ></el-input>
         </el-form-item>
-        <el-form-item label="Age">
-          <el-input v-model="createUser.age"></el-input>
+        <el-form-item label="Age" prop="age" required>
+          <el-input
+            v-model="createUser.age"
+            type="number"
+          ></el-input>
         </el-form-item>
-        <el-form-item label="Gender">
+        <el-form-item label="Gender" prop="gender" required>
           <el-select
             v-model="createUser.gender"
             placeholder="Please select your gender"
             style="width: 100%;">
-            <el-option label="Male" value="shanghai"></el-option>
-            <el-option label="Female" value="beijing"></el-option>
+            <el-option label="Male" value="1"></el-option>
+            <el-option label="Female" value="0"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="Phone">
-          <el-input v-model="createUser.phone"></el-input>
+        <el-form-item label="Phone" prop="phone" required>
+          <el-input v-model="createUser.phone" type="number">
+            <template slot="prepend">+971</template>
+          </el-input>
         </el-form-item>
-        <el-form-item label="Email">
+        <el-form-item label="Email" prop="email" required>
           <el-input v-model="createUser.email"></el-input>
         </el-form-item>
         <el-form-item size="large">
           <div class="form-btn">
             <el-button @click="onCancelCreate" plain>Cancel</el-button>
-            <el-button type="primary" plain>Create</el-button>
+            <el-button
+              type="primary"
+              @click="onSubmit"
+              plain>Create</el-button>
           </div>
         </el-form-item>
       </el-form>
@@ -104,6 +119,17 @@
   </div>
 </template>
 <script>
+import { getAllUser, delUser, addUser } from '../api/user';
+import { validatePhoneNumber, validateEmail } from '../utils/validate';
+
+const DEFAULT_FORM = {
+  name: '',
+  age: '',
+  gender: '',
+  phone: '',
+  email: '',
+};
+
 export default {
   name: 'UserPage',
   props: {
@@ -122,51 +148,119 @@ export default {
     },
   },
   data() {
+    const validateName = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('Name is a mandatory field.'));
+      } else {
+        callback();
+      }
+    };
+    const validateAge = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('Age is a mandatory field,'));
+      } else if (value < 7 || value > 99) {
+        callback(new Error('Age should be between 7 and 99.'));
+      } else {
+        callback();
+      }
+    };
+    const validateGender = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('Gender is a mandatory field'));
+      } else {
+        callback();
+      }
+    };
+    const validatePhoneForm = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('Phone number is a mandatory field'));
+      } else if (!validatePhoneNumber(value)) {
+        callback(new Error('Please input correct phone number.'));
+      } else {
+        callback();
+      }
+    };
+    const validateEmailForm = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('Email is a mandatory field.'));
+      } else if (!validateEmail(value)) {
+        callback(new Error('Please input correct Email address'));
+      } else {
+        callback();
+      }
+    };
     return {
       isAddUser: false,
-      createUser: {
-        name: '',
-        age: '',
-        gender: '',
-        phone: '',
-        email: '',
+      userRule: {
+        name: [{ validator: validateName }],
+        age: [{ validator: validateAge }],
+        gender: [{ validator: validateGender }],
+        phone: [{ validator: validatePhoneForm }],
+        email: [{ validator: validateEmailForm }],
       },
-      userData: [
-        {
-          id: 1, name: 'Carl', age: 43, gender: 'Male', phone: '0555137854', email: 'carlagren33@gmail.com',
-        }, {
-          id: 12, name: 'Carl', age: 43, gender: 'Male', phone: '0555137854', email: 'carlagren33@gmail.com',
-        }, {
-          id: 13, name: 'Carl', age: 43, gender: 'Male', phone: '0555137854', email: 'carlagren33@gmail.com',
-        }, {
-          id: 11, name: 'Carl', age: 43, gender: 'Male', phone: '0555137854', email: 'carlagren33@gmail.com',
-        }, {
-          id: 123, name: 'Carl', age: 43, gender: 'Male', phone: '0555137854', email: 'carlagren33@gmail.com',
-        }, {
-          id: 1341, name: 'Carl', age: 43, gender: 'Male', phone: '0555137854', email: 'carlagren33@gmail.com',
-        }, {
-          id: 21, name: 'Carl', age: 43, gender: 'Male', phone: '0555137854', email: 'carlagren33@gmail.com',
-        }, {
-          id: 15, name: 'Carl', age: 43, gender: 'Male', phone: '0555137854', email: 'carlagren33@gmail.com',
-        }, {
-          id: 16, name: 'Carl', age: 43, gender: 'Male', phone: '0555137854', email: 'carlagren33@gmail.com',
-        },
-      ],
+      createUser: Object.assign({}, DEFAULT_FORM),
+      userData: [],
       selectedId: '',
     };
   },
   methods: {
+    getUserData() {
+      getAllUser().then((data) => {
+        const userDataTemp = [];
+        data.forEach((user) => {
+          const userObj = Object.assign({}, user);
+          userObj.genderStr = user.gender === 1 ? 'Male' : 'Female';
+          userDataTemp.push(userObj);
+        });
+        this.userData = userDataTemp;
+      });
+    },
+    backToTable() {
+      this.isAddUser = false;
+      this.$emit('create-event', false);
+    },
     onCreateUserBtn() {
       this.isAddUser = true;
       this.$emit('create-event', true);
     },
     onCancelCreate() {
-      this.isAddUser = false;
-      this.$emit('create-event', false);
+      this.backToTable();
     },
     onSelectUser(userId) {
       this.$emit('select-user-event', userId);
     },
+    onDelUser(userId) {
+      this.$confirm('This will permanently delete the user. Continue?', 'Warning', {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning',
+      }).then(() => {
+        delUser(userId).then(() => {
+          this.$message({
+            type: 'success',
+            message: 'Delete completed',
+          });
+          this.getUserData();
+        });
+      }).catch(() => {
+        console.log('delete canceled');
+      });
+    },
+    onSubmit() {
+      this.$refs.createUserForm.validate((valid) => {
+        if (valid) {
+          console.log(this.createUser);
+          addUser(this.createUser).then(() => {
+            this.backToTable();
+            this.getUserData();
+            this.createUser = Object.assign({}, DEFAULT_FORM);
+          });
+        }
+      });
+    },
+  },
+  mounted() {
+    this.getUserData();
   },
 };
 </script>
