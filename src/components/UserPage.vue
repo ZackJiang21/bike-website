@@ -13,15 +13,19 @@
         </div>
         <div class="search-input">
           <el-input
+            v-model="searchUserStr"
             maxlength="64"
             placeholder="Please input user name."
-            suffix-icon="el-icon-search">
+            suffix-icon="el-icon-search"
+            @input="onSearchUser"
+            clearable
+          >
           </el-input>
         </div>
       </div>
       <div>
         <el-table
-          :data="userData"
+          :data="displayUserData"
           :max-height="getTableHeight"
           :height="getTableHeight">
           <el-table-column width="35" fixed>
@@ -200,7 +204,9 @@ export default {
       },
       createUser: Object.assign({}, DEFAULT_FORM),
       userData: [],
+      displayUserData: [],
       selectedId: '',
+      searchUserStr: '',
     };
   },
   methods: {
@@ -213,6 +219,7 @@ export default {
           userDataTemp.push(userObj);
         });
         this.userData = userDataTemp;
+        this.displayUserData = userDataTemp;
       });
     },
     backToTable() {
@@ -257,6 +264,20 @@ export default {
           });
         }
       });
+    },
+    onSearchUser() {
+      if (this.searchUserStr === '') {
+        this.displayUserData = [...this.userData];
+      } else {
+        const searchedUserData = [];
+        this.userData.forEach((user) => {
+          // eslint-disable-next-line max-len
+          if (user.name.toLocaleLowerCase().indexOf(this.searchUserStr.toLocaleLowerCase()) !== -1) {
+            searchedUserData.push(user);
+          }
+        });
+        this.displayUserData = searchedUserData;
+      }
     },
   },
   mounted() {
