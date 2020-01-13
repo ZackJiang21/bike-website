@@ -24,7 +24,7 @@
           v-if="!isProcessing"
           type="primary"
           @click="handleStartProcess"
-          :disabled="!hasUserInfo">
+          :disabled="!hasRiderInfo">
           Get Started
           <span class="el-icon-caret-right el-icon--right"></span>
         </el-button>
@@ -37,13 +37,39 @@
           <span class="el-icon-switch-button el-icon--right"></span>
         </el-button>
         <el-button
-          v-if="!isShowLogIn"
+          v-if="isShowLogInBtn"
           type="primary"
           @click="onShowLogIn"
         >
           Log In
           <span class="el-icon-user-solid el-icon--right"></span>
         </el-button>
+        <el-dropdown
+          class="user-drop-down"
+          v-if="hasRiderInfo"
+          trigger="click"
+          @command="onUserCommand"
+        >
+          <el-button
+            type="primary"
+          >
+            {{riderInfo.user.name}}
+            <span class="el-icon-arrow-down el-icon--right"></span>
+          </el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item
+              command="change"
+              icon="icon-el-icon-ali-change">
+              Change User
+            </el-dropdown-item>
+            <el-dropdown-item
+              command="logout"
+              icon="icon-el-icon-ali-logout"
+            >
+              Log out
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </div>
     </div>
     <div class="body">
@@ -136,6 +162,7 @@
           <div v-if="isShowLogIn" class="right-panel-item" key="login">
             <log-in-page
               :max-height="resolution.tableHeight"
+              @selected-rider-event="onSelectRider"
               @log-in-back="onLogInBack">
             </log-in-page>
           </div>
@@ -460,6 +487,14 @@ export default {
     DefinitionPage,
     LogInPage,
   },
+  computed: {
+    isShowLogInBtn() {
+      if (!this.isShowLogIn && !this.hasRiderInfo) {
+        return true;
+      }
+      return false;
+    },
+  },
   data() {
     return {
       isShowFabric: true,
@@ -481,7 +516,8 @@ export default {
         angles: {},
         distance: {},
       }),
-      hasUserInfo: false,
+      hasRiderInfo: false,
+      riderInfo: {},
       isShowLogIn: false,
     };
   },
@@ -527,6 +563,19 @@ export default {
     window.onresize = this.calculateHeight;
   },
   methods: {
+    onUserCommand(command) {
+      if (command === 'logout') {
+        this.hasRiderInfo = false;
+        this.riderInfo = {};
+      } else if (command === 'change') {
+        this.isShowLogIn = true;
+      }
+    },
+    onSelectRider(rider) {
+      this.riderInfo = rider;
+      this.hasRiderInfo = true;
+      this.isShowLogIn = false;
+    },
     onShowLogIn() {
       this.isDefinition = false;
       this.isShowLogIn = true;
@@ -1185,5 +1234,8 @@ export default {
     left: 20px;
     bottom: 20px;
     right: 20px;
+  }
+  .user-drop-down {
+    margin-left: 10px;
   }
 </style>

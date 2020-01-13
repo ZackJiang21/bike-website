@@ -41,6 +41,7 @@
       <el-button
         v-if="isFinBtn"
         type="success"
+        @click="onFinish"
         :disabled="isFinDisable"
         plain>
         Finish<i class="el-icon-finished el-icon--right"/>
@@ -75,7 +76,9 @@ export default {
     return {
       stepActive: 0,
       userId: UNSELECT_USER_ID,
+      user: {},
       bikeId: '',
+      bike: {},
       isShowBtn: true,
     };
   },
@@ -90,7 +93,7 @@ export default {
       return this.stepActive === FINAL_STEP && this.isShowBtn;
     },
     isNextDisable() {
-      return this.userId === '';
+      return this.userId === UNSELECT_USER_ID;
     },
     isFinDisable() {
       return this.bikeId === '';
@@ -109,13 +112,22 @@ export default {
     onCreateEvent(isCreate) {
       this.isShowBtn = !isCreate;
     },
-    onSelectUser(userId) {
-      this.userId = userId;
+    onSelectUser(user) {
+      this.userId = user.id;
+      this.user = user;
       // After modify the userId, bikeId should be clear
       this.bikeId = '';
     },
-    onSelectBike(bikeId) {
-      this.bikeId = bikeId;
+    onSelectBike(bike) {
+      this.bikeId = bike.id;
+      this.bike = bike;
+    },
+    onFinish() {
+      const rider = {
+        user: this.user,
+        bike: this.bike,
+      };
+      this.$emit('selected-rider-event', rider);
     },
   },
 };

@@ -21,7 +21,7 @@
             <template slot-scope="scope">
               <el-radio
                 v-model="selectedId"
-                @change="onSelectBike"
+                @change="onSelectBike(scope.row)"
                 :label="scope.row.id">
               </el-radio>
             </template>
@@ -166,6 +166,8 @@ export default {
     userId(userId) {
       getBikesByUserId(userId).then((res) => {
         this.bikeData = res;
+        // after change userId, selected bike id needs to be initialized
+        this.selectedId = '';
       });
     },
   },
@@ -186,8 +188,8 @@ export default {
     onCancelCreate() {
       this.backToTable();
     },
-    onSelectBike(bikeId) {
-      this.$emit('select-bike-event', bikeId);
+    onSelectBike(bike) {
+      this.$emit('select-bike-event', bike);
     },
     onSubmit() {
       this.$refs.createBikeForm.validate((valid) => {
@@ -195,6 +197,7 @@ export default {
           addBike(this.createBike, this.userId).then(() => {
             this.backToTable();
             this.getBikeData();
+            this.createBike = Object.assign({}, DEFAULT_FORM);
           });
         }
       });

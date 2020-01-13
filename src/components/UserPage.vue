@@ -30,12 +30,17 @@
           :height="getTableHeight">
           <el-table-column width="35" fixed>
             <template slot-scope="scope">
-              <el-radio v-model="selectedId" :label="scope.row.id" @change="onSelectUser">
+              <el-radio
+                v-model="selectedId"
+                :label="scope.row.id"
+                @change="onSelectUser(scope.row)"
+              >
               </el-radio>
             </template>
           </el-table-column>
           <el-table-column
             label="Name"
+            width="120"
             prop="name" fixed>
           </el-table-column>
           <el-table-column
@@ -240,8 +245,8 @@ export default {
     onCancelCreate() {
       this.backToTable();
     },
-    onSelectUser(userId) {
-      this.$emit('select-user-event', userId);
+    onSelectUser(user) {
+      this.$emit('select-user-event', user);
     },
     onDelUser(userId) {
       this.$confirm('This will permanently delete the user. Continue?', 'Warning', {
