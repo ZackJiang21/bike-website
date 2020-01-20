@@ -37,6 +37,13 @@
           <span class="el-icon-switch-button el-icon--right"></span>
         </el-button>
         <el-button
+          v-if="hasReport"
+          type="primary"
+          @click="getReport"
+        >
+          Generate Report
+        </el-button>
+        <el-button
           v-if="isShowLogInBtn"
           type="primary"
           @click="onShowLogIn"
@@ -261,6 +268,7 @@ import VueFabric from '../components/fabric.vue';
 import SkeletonCard from '../components/SkeletonCard.vue';
 import DefinitionPage from '../components/DefinitionPage.vue';
 import LogInPage from '../components/LogInPage.vue';
+import generateReport from '../utils/report';
 
 const CANVAS_PREFIX = 'canvas_';
 const VIDEO_PREFIX = '#video_';
@@ -274,7 +282,7 @@ const SIDE = {
   FRONT: 'front',
 };
 
-const socket = io.connect('http://10.10.1.105:5000', { transports: ['websocket'] });
+const socket = io.connect('http://10.111.137.125:5000', { transports: ['websocket'] });
 
 const VISIBLE_POINT = {
   right: {
@@ -497,6 +505,7 @@ export default {
   },
   data() {
     return {
+      hasReport: false,
       isShowFabric: true,
       resolution: {
         originVideoWidth: 180,
@@ -512,6 +521,11 @@ export default {
       ratio: 1,
       isProcessing: false,
       isDefinition: false,
+      fittingData: {
+        angles: {},
+        distance: {},
+        images: {},
+      },
       tableData: this.getFittingData({
         angles: {},
         distance: {},
@@ -533,10 +547,14 @@ export default {
           const side = SIDE[key];
           this.renderFabric(data, side);
         });
+      this.fittingData.angles = data.angles;
+      this.fittingData.distance = data.distance;
       this.tableData = this.getFittingData(data);
     });
 
     socket.on('image', (data) => {
+      console.log('recv image');
+      this.fittingData.images = data;
       Object.keys(SIDE)
         .forEach((key) => {
           const side = SIDE[key];
@@ -550,7 +568,7 @@ export default {
           image.src = url;
           image.onload = () => {
             ctx.drawImage(image, 0, 0,
-              this.resolution.cardWidth, this.resolution.cardHeight);
+              180, 320);
           };
         });
     });
@@ -563,6 +581,10 @@ export default {
     window.onresize = this.calculateHeight;
   },
   methods: {
+    getReport() {
+      generateReport(this.riderInfo, this.fittingData);
+      this.hasReport = false;
+    },
     onUserCommand(command) {
       if (command === 'logout') {
         this.hasRiderInfo = false;
@@ -605,6 +627,12 @@ export default {
     renderFabric(data, side) {
       const points = data[side].map(input => [
         input[0] * this.ratio, input[1] * this.ratio, input[2]]);
+      // eslint-disable-next-line no-restricted-syntax
+      for (const idx in VISIBLE_POINT[side]) {
+        if (!points[idx][2]) {
+          return;
+        }
+      }
       this.drawLines(points, side);
       points.forEach((point, index) => {
         if (point[2] && VISIBLE_POINT[side][index]) {
@@ -982,7 +1010,7 @@ export default {
           moreRight: this.getFittingValue(angles, 'Foot_From_Level', 'right_more_than_range'),
           right: this.getFittingValue(angles, 'Foot_From_Level', 'right'),
           warning: this.getFittingValue(angles, 'Foot_From_Level', 'left_exceed_range', true) || this.getFittingValue(angles, 'Foot_From_Level', 'right_exceed_range', true),
-          units: 'mm',
+          units: 'deg',
           range: NA_STR,
         }, {
           title: 'Foot from Level Mean',
@@ -993,7 +1021,7 @@ export default {
           moreRight: this.getFittingValue(angles, 'Foot_From_Level_Average', 'right_more_than_range'),
           right: this.getFittingValue(angles, 'Foot_From_Level_Average', 'right'),
           warning: this.getFittingValue(angles, 'Foot_From_Level_Average', 'left_exceed_range', true) || this.getFittingValue(angles, 'Foot_From_Level_Average', 'right_exceed_range', true),
-          units: 'mm',
+          units: 'deg',
           range: NA_STR,
         }, {}, {
           src: '../../static/img/knee_lateral_travel.png',
@@ -1001,7 +1029,7 @@ export default {
           title: 'Knee Lateral Travel',
           left: distance.Knee_Lateral_Travel_left ? distance.Knee_Lateral_Travel_left : NA_STR,
           right: distance.Knee_Lateral_Travel_right ? distance.Knee_Lateral_Travel_right : NA_STR,
-          units: 'deg',
+          units: 'mm',
           range: '5 to 36',
         }, {}, {
           src: '../../static/img/hip_vertical_travel.png',
@@ -1029,10 +1057,12 @@ export default {
     },
     handleStartProcess() {
       this.isProcessing = true;
+      this.hasReport = false;
       socket.emit('start_process', 'start');
     },
     handleStop() {
       this.isProcessing = false;
+      this.hasReport = true;
       socket.emit('cancel_process');
     },
     onShowDef() {
@@ -1237,5 +1267,8 @@ export default {
   }
   .user-drop-down {
     margin-left: 10px;
+  }
+  .el-radio__label {
+    display: none !important;
   }
 </style>

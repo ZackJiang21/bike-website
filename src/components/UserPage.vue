@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="!isAddUser">
+    <div v-if="!isAddUser && showTable">
       <div class="user-btn-group">
         <div class="user-btn">
           <el-button
@@ -27,8 +27,10 @@
         <el-table
           :data="displayUserData"
           :max-height="getTableHeight"
-          :height="getTableHeight">
-          <el-table-column width="35" fixed>
+          :height="getTableHeight"
+          style="width: 100%; height: 100%"
+        >
+          <el-table-column width="45" fixed>
             <template slot-scope="scope">
               <el-radio
                 v-model="selectedId"
@@ -40,8 +42,10 @@
           </el-table-column>
           <el-table-column
             label="Name"
-            width="120"
-            prop="name" fixed>
+            prop="name"
+            width="240"
+            fixed
+          >
           </el-table-column>
           <el-table-column
             label="Age"
@@ -56,11 +60,13 @@
           <el-table-column
             label="Phone"
             prop="phone"
+            width="150"
             show-overflow-tooltip>
           </el-table-column>
           <el-table-column
             label="Email"
             prop="email"
+            width="200"
             show-overflow-tooltip>
           </el-table-column>
           <el-table-column label="Operation" width="110" fixed="right">
@@ -87,7 +93,7 @@
         <el-form-item label="Name" prop="name" required>
           <el-input
             v-model="createUser.name"
-            maxlength="64"
+            maxlength="32"
           ></el-input>
         </el-form-item>
         <el-form-item label="Age" prop="age" required>
@@ -207,6 +213,7 @@ export default {
     };
     return {
       isAddUser: false,
+      showTable: true,
       userRule: {
         name: [{ validator: validateName }],
         age: [{ validator: validateAge }],
@@ -232,6 +239,8 @@ export default {
         });
         this.userData = userDataTemp;
         this.displayUserData = userDataTemp;
+        this.showTable = false;
+        this.showTable = true;
       });
     },
     backToTable() {
