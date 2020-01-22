@@ -24,9 +24,14 @@ import hipVerticalTravel from '../assets/img/hip_vertical_travel.png';
 import hipLateralTravel from '../assets/img/hip_lateral_travel.png';
 import markerPath from '../assets/img/marker_path.png';
 
+import appendix1 from '../assets/img/appendix1.png';
+import appendix2 from '../assets/img/appendix2.png';
+import appendix3 from '../assets/img/appendix3.png';
+
+
 
 const generateReport = (riderInfo, fittingData) => {
-  const { angles, distance, images } = fittingData;
+  const { angles, distance, images, skeleton } = fittingData;
   const doc = new JsPdf({
     orientation: 'p',
     unit: 'px',
@@ -58,7 +63,13 @@ const generateReport = (riderInfo, fittingData) => {
     rowValue.push(getFittingValue(object, key, 'right_more_than_range'));
 
     const range = getFittingValue(object, key, 'good_range');
-    rowValue.push(range);
+    let rangeStr;
+    if (range[0] === null) {
+      rangeStr = '--'
+    } else {
+      rangeStr = `${range[0]}-${range[1]}`
+    }
+    rowValue.push(rangeStr);
     return rowValue;
   };
 
@@ -378,7 +389,7 @@ const generateReport = (riderInfo, fittingData) => {
       doc.setFontSize(10);
       doc.setTextColor('#000');
       doc.setFontType('normal');
-      const markerPathNote = 'Note: Maker paths viewed from the front will be on the opposite side of the report. The paths representing the right side of the body will be shown on the left and vice versa.';
+      const markerPathNote = 'Note: Maker paths viewed from the front will be on the opposite side of the report. The paths representing the right side of the body will be shown on the left and vice versa. Green is downstroke and red is upstroke.';
       const splitText = doc.splitTextToSize(markerPathNote, CONTENT_WIDTH);
       let textLine = 350;
       splitText.forEach((text) => {
@@ -467,11 +478,12 @@ const generateReport = (riderInfo, fittingData) => {
 
 
   const processPage5 = () => {
-    const IMG_COUNT = 3;
+    const IMG_COUNT = 6;
     let renderedImg = 0;
     return new Promise(resolve => {
       doc.addPage();
-      renderHeader('FINAL POSITION', SIDE_MARGIN, 30, CONTENT_WIDTH);
+      renderHeader('FINAL POSITION', SIDE_MARGIN, 20, CONTENT_WIDTH);
+      renderHeader('FINAL SKELETON', SIDE_MARGIN, 300, CONTENT_WIDTH);
 
       const imageMargin = 10;
       const imageWidth = (CONTENT_WIDTH - 2 * imageMargin) / 3;
@@ -481,19 +493,37 @@ const generateReport = (riderInfo, fittingData) => {
       const frontSrc = `data:image/jpeg;base64,${images.img_front}`;
       const rightSrc = `data:image/jpeg;base64,${images.img_right}`;
       renderImage(leftSrc, (image) => {
-        doc.addImage(image, 'PNG', SIDE_MARGIN, 60, imageWidth, imageHeight);
+        doc.addImage(image, 'PNG', SIDE_MARGIN, 50, imageWidth, imageHeight);
         if (++renderedImg >= IMG_COUNT) {
           resolve();
         }
       });
       renderImage(rightSrc, (image) => {
-        doc.addImage(image, 'PNG', SIDE_MARGIN + 2 * imageMargin + 2 * imageWidth, 60, imageWidth, imageHeight);
+        doc.addImage(image, 'PNG', SIDE_MARGIN + 2 * imageMargin + 2 * imageWidth, 50, imageWidth, imageHeight);
         if (++renderedImg >= IMG_COUNT) {
           resolve();
         }
       });
       renderImage(frontSrc, (image) => {
-        doc.addImage(image, 'PNG', SIDE_MARGIN + imageMargin + imageWidth, 60, imageWidth, imageHeight);
+        doc.addImage(image, 'PNG', SIDE_MARGIN + imageMargin + imageWidth, 50, imageWidth, imageHeight);
+        if (++renderedImg >= IMG_COUNT) {
+          resolve();
+        }
+      });
+      renderImage(skeleton.left, (image) => {
+        doc.addImage(image, 'PNG', SIDE_MARGIN, 330, imageWidth, imageHeight);
+        if (++renderedImg >= IMG_COUNT) {
+          resolve();
+        }
+      });
+      renderImage(skeleton.front, (image) => {
+        doc.addImage(image, 'PNG', SIDE_MARGIN + imageMargin + imageWidth, 330, imageWidth, imageHeight);
+        if (++renderedImg >= IMG_COUNT) {
+          resolve();
+        }
+      });
+      renderImage(skeleton.right, (image) => {
+        doc.addImage(image, 'PNG', SIDE_MARGIN + 2 * imageMargin + 2 * imageWidth, 330, imageWidth, imageHeight);
         if (++renderedImg >= IMG_COUNT) {
           resolve();
         }
@@ -502,16 +532,39 @@ const generateReport = (riderInfo, fittingData) => {
     });
   };
 
+  const processAppendix = () => {
+    const addAppendix = (appendix) => {
+      return new Promise(resolve => {
+        doc.addPage();
+        renderImage(appendix, (image) => {
+          doc.addImage(image, 'PNG', 0, 0, doc.internal.pageSize.width, doc.internal.pageSize.height);
+          resolve();
+        })
+      });
+    };
+    return new Promise(resolve => {
+      addAppendix(appendix1).then(() => {
+        addAppendix(appendix2).then(() => {
+          addAppendix(appendix3).then(() => {
+            resolve();
+          });
+        });
+      });
+    });
+  };
+
   processPage1().then(() => {
       processPage2().then(() => {
           processPage3().then(() => {
             processPage4().then(() => {
               processPage5().then(() => {
-                doc.setProperties({
-                  title: `${riderInfo.name}-${moment().format('YYYY-MM-DD hh:mm a')}`
+                processAppendix().then(() => {
+                  doc.setProperties({
+                    title: `${riderInfo.user.name}-${moment().format('YYYY-MM-DD hh:mm a')}`
+                  });
+                  const win = window.open();
+                  win.location = URL.createObjectURL(doc.output("blob"));
                 });
-                const win = window.open();
-                win.location = URL.createObjectURL(doc.output("blob"));
               });
             });
           });

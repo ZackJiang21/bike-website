@@ -166,14 +166,14 @@
       </div>
       <el-card class="right-panel">
         <transition name="slide-fade">
-          <div v-if="isShowLogIn" class="right-panel-item" key="login">
+          <div v-show="isShowLogIn" class="right-panel-item" key="login">
             <log-in-page
               :max-height="resolution.tableHeight"
               @selected-rider-event="onSelectRider"
               @log-in-back="onLogInBack">
             </log-in-page>
           </div>
-          <div v-else-if="!isDefinition" class="right-panel-item" key="measurement">
+          <div v-show="!isDefinition" class="right-panel-item" key="measurement">
             <el-table
               :data="tableData"
               size="mini"
@@ -252,7 +252,7 @@
               </el-table-column>
             </el-table>
           </div>
-          <div v-else class="right-panel-item" key="definition">
+          <div v-show="isDefinition" class="right-panel-item" key="definition">
             <definition-page :max-height="resolution.tableHeight"/>
           </div>
         </transition>
@@ -269,6 +269,7 @@ import SkeletonCard from '../components/SkeletonCard.vue';
 import DefinitionPage from '../components/DefinitionPage.vue';
 import LogInPage from '../components/LogInPage.vue';
 import generateReport from '../utils/report';
+
 
 const CANVAS_PREFIX = 'canvas_';
 const VIDEO_PREFIX = '#video_';
@@ -525,6 +526,7 @@ export default {
         angles: {},
         distance: {},
         images: {},
+        skeleton: {},
       },
       tableData: this.getFittingData({
         angles: {},
@@ -541,7 +543,6 @@ export default {
     });
 
     socket.on('points', (data) => {
-      this.clearFabricCanvas();
       Object.keys(SIDE)
         .forEach((key) => {
           const side = SIDE[key];
@@ -553,7 +554,6 @@ export default {
     });
 
     socket.on('image', (data) => {
-      console.log('recv image');
       this.fittingData.images = data;
       Object.keys(SIDE)
         .forEach((key) => {
@@ -633,6 +633,7 @@ export default {
           return;
         }
       }
+      this.$refs[CANVAS_PREFIX + side].clear();
       this.drawLines(points, side);
       points.forEach((point, index) => {
         if (point[2] && VISIBLE_POINT[side][index]) {
@@ -969,34 +970,48 @@ export default {
           src: '../../static/img/knee_to_foot_forward.png',
         }, {
           title: 'Knee Forward of Foot',
-          left: distance.Knee_to_Foot_Forward_left ? distance.Knee_to_Foot_Forward_left : NA_STR,
-          right: distance.Knee_to_Foot_Forward_right ? distance.Knee_to_Foot_Forward_right : NA_STR,
+          left: this.getFittingValue(distance, 'Knee_to_Foot_Forward', 'left'),
+          lessLeft: this.getFittingValue(distance, 'Knee_to_Foot_Forward', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(distance, 'Knee_to_Foot_Forward', 'left_more_than_range'),
+          lessRight: this.getFittingValue(distance, 'Knee_to_Foot_Forward', 'right_less_than_range'),
+          moreRight: this.getFittingValue(distance, 'Knee_to_Foot_Forward', 'right_more_than_range'),
+          right: this.getFittingValue(distance, 'Knee_to_Foot_Forward', 'right'),
           units: 'mm',
           range: '50 to 120',
         }, {}, {
           src: '../../static/img/knee_to_feet_lateral.png',
         }, {
           title: 'Knee to Foot Lateral',
-          left: distance.Knee_to_Foot_Lateral_left ? distance.Knee_to_Foot_Lateral_left : NA_STR,
-          right: distance.Knee_to_Foot_Lateral_right ? distance.Knee_to_Foot_Lateral_right : NA_STR,
+          left: this.getFittingValue(distance, 'Knee_to_Foot_Lateral', 'left'),
+          lessLeft: this.getFittingValue(distance, 'Knee_to_Foot_Lateral', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(distance, 'Knee_to_Foot_Lateral', 'left_more_than_range'),
+          lessRight: this.getFittingValue(distance, 'Knee_to_Foot_Lateral', 'right_less_than_range'),
+          moreRight: this.getFittingValue(distance, 'Knee_to_Foot_Lateral', 'right_more_than_range'),
+          right: this.getFittingValue(distance, 'Knee_to_Foot_Lateral', 'right'),
           units: 'mm',
           range: NA_STR,
         }, {}, {
           src: '../../static/img/hip_to_foot_lateral.png',
         }, {
           title: 'Hip to Foot Lateral',
-          left: distance.Hip_to_Foot_Lateral_left ? distance.Hip_to_Foot_Lateral_left : NA_STR,
-          right: distance.Hip_to_Foot_Lateral_right ? distance.Hip_to_Foot_Lateral_right : NA_STR,
+          left: this.getFittingValue(distance, 'Hip_to_Foot_Lateral', 'left'),
+          lessLeft: this.getFittingValue(distance, 'Hip_to_Foot_Lateral', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(distance, 'Hip_to_Foot_Lateral', 'left_more_than_range'),
+          lessRight: this.getFittingValue(distance, 'Hip_to_Foot_Lateral', 'right_less_than_range'),
+          moreRight: this.getFittingValue(distance, 'Hip_to_Foot_Lateral', 'right_more_than_range'),
+          right: this.getFittingValue(distance, 'Hip_to_Foot_Lateral', 'right'),
           units: 'mm',
           range: NA_STR,
         }, {}, {
           src: '../../static/img/shoulder_to_wrist_lateral.png',
         }, {
           title: 'Shoulder to Wrist Lateral',
-          left: distance.Shoulder_to_Wrist_Lateral_left ? distance.Shoulder_to_Wrist_Lateral_left
-            : NA_STR,
-          right: distance.Shoulder_to_Wrist_Lateral_right ? distance.Shoulder_to_Wrist_Lateral_right
-            : NA_STR,
+          left: this.getFittingValue(distance, 'Shoulder_to_Wrist_Lateral', 'left'),
+          lessLeft: this.getFittingValue(distance, 'Shoulder_to_Wrist_Lateral', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(distance, 'Shoulder_to_Wrist_Lateral', 'left_more_than_range'),
+          lessRight: this.getFittingValue(distance, 'Shoulder_to_Wrist_Lateral', 'right_less_than_range'),
+          moreRight: this.getFittingValue(distance, 'Shoulder_to_Wrist_Lateral', 'right_more_than_range'),
+          right: this.getFittingValue(distance, 'Shoulder_to_Wrist_Lateral', 'right'),
           units: 'mm',
           range: NA_STR,
         }, {},
@@ -1027,24 +1042,36 @@ export default {
           src: '../../static/img/knee_lateral_travel.png',
         }, {
           title: 'Knee Lateral Travel',
-          left: distance.Knee_Lateral_Travel_left ? distance.Knee_Lateral_Travel_left : NA_STR,
-          right: distance.Knee_Lateral_Travel_right ? distance.Knee_Lateral_Travel_right : NA_STR,
+          left: this.getFittingValue(distance, 'Knee_Lateral_Travel', 'left'),
+          lessLeft: this.getFittingValue(distance, 'Knee_Lateral_Travel', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(distance, 'Knee_Lateral_Travel', 'left_more_than_range'),
+          lessRight: this.getFittingValue(distance, 'Knee_Lateral_Travel', 'right_less_than_range'),
+          moreRight: this.getFittingValue(distance, 'Knee_Lateral_Travel', 'right_more_than_range'),
+          right: this.getFittingValue(distance, 'Knee_Lateral_Travel', 'right'),
           units: 'mm',
           range: '5 to 36',
         }, {}, {
           src: '../../static/img/hip_vertical_travel.png',
         }, {
           title: 'Hip Vertical Travel',
-          left: distance.Hip_Vertical_Travel_left ? distance.Hip_Vertical_Travel_left : NA_STR,
-          right: distance.Hip_Vertical_Travel_right ? distance.Hip_Vertical_Travel_right : NA_STR,
+          left: this.getFittingValue(distance, 'Hip_Vertical_Travel', 'left'),
+          lessLeft: this.getFittingValue(distance, 'Hip_Vertical_Travel', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(distance, 'Hip_Vertical_Travel', 'left_more_than_range'),
+          lessRight: this.getFittingValue(distance, 'Hip_Vertical_Travel', 'right_less_than_range'),
+          moreRight: this.getFittingValue(distance, 'Hip_Vertical_Travel', 'right_more_than_range'),
+          right: this.getFittingValue(distance, 'Hip_Vertical_Travel', 'right'),
           units: 'mm',
           range: NA_STR,
         }, {}, {
           src: '../../static/img/hip_lateral_travel.png',
         }, {
           title: 'Hip Lateral Travel',
-          left: distance.Hip_Lateral_Travel_left ? distance.Hip_Lateral_Travel_left : NA_STR,
-          right: distance.Hip_Lateral_Travel_right ? distance.Hip_Lateral_Travel_right : NA_STR,
+          left: this.getFittingValue(distance, 'Hip_Lateral_Travel', 'left'),
+          lessLeft: this.getFittingValue(distance, 'Hip_Lateral_Travel', 'left_less_than_range'),
+          moreLeft: this.getFittingValue(distance, 'Hip_Lateral_Travel', 'left_more_than_range'),
+          lessRight: this.getFittingValue(distance, 'Hip_Lateral_Travel', 'right_less_than_range'),
+          moreRight: this.getFittingValue(distance, 'Hip_Lateral_Travel', 'right_more_than_range'),
+          right: this.getFittingValue(distance, 'Hip_Lateral_Travel', 'right'),
           units: 'mm',
           range: '5 to 20',
         }, {},
@@ -1056,11 +1083,18 @@ export default {
       ];
     },
     handleStartProcess() {
+      this.clearFabricCanvas();
       this.isProcessing = true;
       this.hasReport = false;
       socket.emit('start_process', 'start');
     },
     handleStop() {
+      Object.keys(SIDE).forEach((key) => {
+        const side = SIDE[key];
+        this.fittingData.skeleton[side] = this.$refs[CANVAS_PREFIX + side].toDataUrl();
+      });
+      console.log(this.fittingData.skeleton);
+      this.clearFabricCanvas();
       this.isProcessing = false;
       this.hasReport = true;
       socket.emit('cancel_process');
