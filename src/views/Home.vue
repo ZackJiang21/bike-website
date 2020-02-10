@@ -165,99 +165,101 @@
         </div>
       </div>
       <el-card class="right-panel">
-        <el-collapse-transition name="slide-fade">
-          <div>
-            <div v-show="isShowLogIn" class="right-panel-item" key="login">
-              <log-in-page
-                :max-height="resolution.tableHeight"
-                @selected-rider-event="onSelectRider"
-                @log-in-back="onLogInBack">
-              </log-in-page>
-            </div>
-            <div v-show="!isShowLogIn && !isDefinition" class="right-panel-item" key="measurement">
-              <el-table
-                :data="tableData"
-                size="mini"
-                :max-height="resolution.tableHeight"
-                :span-method="processTableSpan"
-                :cell-class-name="processCellClass"
-                :row-class-name="processRowClass"
-                :row-style="resolution.tableRowStyle"
-                border
-                style="width: 100%; height: 100%">
-                <el-table-column
-                  label=""
-                  width="100"
-                  fixed>
+        <transition name="slide-fade">
+          <div v-show="isShowLogIn" class="right-panel-item" key="login">
+            <log-in-page
+              :max-height="resolution.tableHeight"
+              @selected-rider-event="onSelectRider"
+              @log-in-back="onLogInBack">
+            </log-in-page>
+          </div>
+        </transition>
+        <transition name="slide-fade">
+          <div v-show="!isShowLogIn && !isDefinition" class="right-panel-item" key="measurement">
+            <el-table
+              :data="tableData"
+              size="mini"
+              :max-height="resolution.tableHeight"
+              :span-method="processTableSpan"
+              :cell-class-name="processCellClass"
+              :row-class-name="processRowClass"
+              :row-style="resolution.tableRowStyle"
+              border
+              style="width: 100%; height: 100%">
+              <el-table-column
+                label=""
+                width="100"
+                fixed>
+                <template slot-scope="scope">
+                  <img :src="scope.row.src" class="bike-icon"/>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="title"
+                width="160"
+                label="Title"
+                fixed
+              >
+              </el-table-column>
+              <el-table-column label="Left">
+                <el-table-column label="Max Less">
                   <template slot-scope="scope">
-                    <img :src="scope.row.src" class="bike-icon"/>
+                    <div v-if="scope.row.isKneePath">
+                      <canvas id="knee_path" width="180px" height="320px"></canvas>
+                    </div>
+                    <span v-else>
+                      {{scope.row.lessLeft}}
+                    </span>
                   </template>
                 </el-table-column>
                 <el-table-column
-                  prop="title"
-                  width="160"
-                  label="Title"
-                  fixed
-                >
-                </el-table-column>
-                <el-table-column label="Left">
-                  <el-table-column label="Max Less">
-                    <template slot-scope="scope">
-                      <div v-if="scope.row.isKneePath">
-                        <canvas id="knee_path" width="180px" height="320px"></canvas>
-                      </div>
-                      <span v-else>
-                      {{scope.row.lessLeft}}
-                    </span>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    prop="left"
-                    label="Current"
-                  >
-                  </el-table-column>
-                  <el-table-column
-                    prop="moreLeft"
-                    label="Max More"
-                  >
-                  </el-table-column>
-                </el-table-column>
-                <el-table-column
-                  label="Right"
-                >
-                  <el-table-column
-                    prop="lessRight"
-                    label="Max Less"
-                  >
-                  </el-table-column>
-                  <el-table-column
-                    prop="right"
-                    label="Current"
-                  >
-                  </el-table-column>
-                  <el-table-column
-                    prop="moreRight"
-                    label="Max More"
-                  >
-                  </el-table-column>
-                </el-table-column>
-                <el-table-column
-                  prop="range"
-                  label="Range"
+                  prop="left"
+                  label="Current"
                 >
                 </el-table-column>
                 <el-table-column
-                  prop="units"
-                  label="Units"
+                  prop="moreLeft"
+                  label="Max More"
                 >
                 </el-table-column>
-              </el-table>
-            </div>
-            <div v-show="!isShowLogIn && isDefinition" class="right-panel-item" key="definition">
-              <definition-page :max-height="resolution.tableHeight"/>
-            </div>
+              </el-table-column>
+              <el-table-column
+                label="Right"
+              >
+                <el-table-column
+                  prop="lessRight"
+                  label="Max Less"
+                >
+                </el-table-column>
+                <el-table-column
+                  prop="right"
+                  label="Current"
+                >
+                </el-table-column>
+                <el-table-column
+                  prop="moreRight"
+                  label="Max More"
+                >
+                </el-table-column>
+              </el-table-column>
+              <el-table-column
+                prop="range"
+                label="Range"
+              >
+              </el-table-column>
+              <el-table-column
+                prop="units"
+                label="Units"
+              >
+              </el-table-column>
+            </el-table>
           </div>
-        </el-collapse-transition>
+        </transition>
+        <transition name="slide-fade">
+          <div v-show="!isShowLogIn && isDefinition" class="right-panel-item" key="definition">
+            <definition-page :max-height="resolution.tableHeight"/>
+          </div>
+        </transition>
       </el-card>
     </div>
   </div>
