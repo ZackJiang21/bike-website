@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import HomeWeb from '../views/HomeWeb.vue';
 import Index from '../views/Index.vue';
 import Measurement from '../views/Measurement.vue';
+import DefinitionPage from '../components/DefinitionPage.vue';
 
 Vue.use(VueRouter);
 
@@ -24,6 +25,15 @@ const routes = [
     path: '/web',
     name: 'home',
     component: HomeWeb,
+    meta: {
+      keepAlive: true,
+      showNav: true,
+    },
+  },
+  {
+    path: '/def',
+    name: 'definition',
+    component: DefinitionPage,
     meta: {
       keepAlive: true,
       showNav: true,

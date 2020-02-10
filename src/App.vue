@@ -4,11 +4,11 @@
       <router-view v-if="$route.meta.keepAlive"></router-view>
     </keep-alive>
     <router-view v-if="!$route.meta.keepAlive"></router-view>
-    <van-tabbar v-if="$route.meta.showNav" class="nav-bar" route>
+    <van-tabbar v-if="$route.meta.showNav" route>
       <van-tabbar-item replace to="/web" icon="home-o">
         Measurement
       </van-tabbar-item>
-      <van-tabbar-item replace to="/measurement" icon="search">
+      <van-tabbar-item replace to="/def" icon="search">
         Definition
       </van-tabbar-item>
     </van-tabbar>
@@ -33,8 +33,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-}
-.nav-bar {
-  margin-top: 20px;
 }
 </style>
