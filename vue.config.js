@@ -22,7 +22,7 @@ module.exports = {
     },
     proxy: {
       '/dev-api': {
-        target: 'http://10.111.136.124:5000',
+        target: 'http://10.111.137.125:5000',
         changeOrigin: true,
         pathRewrite: {
           ['^/dev-api']: ''

@@ -26,6 +26,7 @@ const routes = [
     component: HomeWeb,
     meta: {
       keepAlive: true,
+      showNav: true,
     },
   },
 ];

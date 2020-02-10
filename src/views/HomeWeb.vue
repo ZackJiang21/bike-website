@@ -611,7 +611,7 @@ export default {
     },
     calculateHeight() {
       const MARGIN_TOP = 100;
-      const MARGIN_BOTTOM = 40;
+      const MARGIN_BOTTOM = 70;
       const CARD_PADDING = 40;
       const CARD_MARGIN = 10;
       const windowHeight = window.innerHeight;
@@ -1197,7 +1197,7 @@ export default {
   .header {
     height: 80px;
     width: 100%;
-    position: fixed;
+    position: relative;
     left: 0;
     right: 0;
     top: 0;
@@ -1205,6 +1205,7 @@ export default {
     padding: 0 20px;
     z-index: 999;
     box-sizing: border-box;
+    margin-bottom: 20px;
   }
 
   .header-logo {
@@ -1223,7 +1224,6 @@ export default {
   }
 
   .body {
-    margin-top: 100px;
     display: flex;
     flex-direction: row;
     padding: 0 20px;
