@@ -40,6 +40,7 @@ const generateReport = (riderInfo, fittingData) => {
 
   const SIDE_MARGIN = 10;
   const CONTENT_WIDTH = doc.internal.pageSize.width - 2 * SIDE_MARGIN;
+  console.log(doc.internal.pageSize);
   const HALF_MARGIN = 10;
   const HALF_CONTENT_WIDTH = (CONTENT_WIDTH - HALF_MARGIN) / 2;
   const HALF_HEADER_BEGIN = SIDE_MARGIN + HALF_CONTENT_WIDTH + HALF_MARGIN;
@@ -105,9 +106,11 @@ const generateReport = (riderInfo, fittingData) => {
     ],
     fitAngles2: [
       [ { img: elbowAngle, rowSpan: 3 }, 'Elbow Angle', ...getRowValue(angles, 'Elbow_Angle') ],
-      [ 'Mean', ...getRowValue(angles, 'Elbow_Angle_Average')], [],
+      [ 'Mean', ...getRowValue(angles, 'Elbow_Angle_Average')],
+      [],
       [ {img: forearmAngle, rowSpan: 3 }, 'Forearm Angle', ...getRowValue(angles, 'Forearm_From_Level') ],
-      [ 'Mean', ...getRowValue(angles,'Forearm_From_Level_Average') ], []
+      [ 'Mean', ...getRowValue(angles,'Forearm_From_Level_Average') ],
+      []
     ],
     fitAlignment: [
       [ { img: kneeFootForward, rowSpan: 3 } ],
@@ -138,7 +141,7 @@ const generateReport = (riderInfo, fittingData) => {
       [],
     ],
     markerPath: [
-      [ { img: markerPath} , 'Front View of Knee Path', { img: images.img_knee_path, isKneePath: true } ]
+      [ { img: markerPath } , 'Front View of Knee Path', { img: images.img_knee_path, isKneePath: true } ]
     ]
   };
 
@@ -365,7 +368,6 @@ const generateReport = (riderInfo, fittingData) => {
         doc.addPage();
         renderHeader('FIT ALIGNMENT', SIDE_MARGIN, 180, CONTENT_WIDTH);
         renderTableData(tableFittingData.fitAngles2, 30, resolve);
-
       });
     };
 
@@ -399,7 +401,7 @@ const generateReport = (riderInfo, fittingData) => {
     }
 
     function renderKneePath(resolve) {
-      const KNEE_PATH_IMG = 2;
+      const KNEE_PATH_IMG = 1;
       let renderedImg = 0;
       doc.autoTable({
         startY: 380,
@@ -555,15 +557,16 @@ const generateReport = (riderInfo, fittingData) => {
 
   processPage1().then(() => {
       processPage2().then(() => {
-          processPage3().then(() => {
-            processPage4().then(() => {
-              processPage5().then(() => {
-                processAppendix().then(() => {
-                  doc.setProperties({
+        processPage3().then(() => {
+          processPage4().then(() => {
+            processPage5().then(() => {
+              processAppendix().then(() => {
+                doc.setProperties({
                     title: `${riderInfo.user.name}-${moment().format('YYYY-MM-DD hh:mm a')}`
                   });
-                  const win = window.open();
-                  win.location = URL.createObjectURL(doc.output("blob"));
+                  doc.save();
+                  // const win = window.open();
+                  // win.location = URL.createObjectURL(doc.output("blob"));
                 });
               });
             });

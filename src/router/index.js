@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Home from '../views/Home.vue';
+import HomeWeb from '../views/HomeWeb.vue';
 import Index from '../views/Index.vue';
+import Measurement from '../views/Measurement.vue';
 
 Vue.use(VueRouter);
 
@@ -12,9 +13,20 @@ const routes = [
     component: Index,
   },
   {
-    path: '/home',
+    path: '/measurement',
+    name: 'measurement',
+    component: Measurement,
+    meta: {
+      keepAlive: true,
+    },
+  },
+  {
+    path: '/web',
     name: 'home',
-    component: Home,
+    component: HomeWeb,
+    meta: {
+      keepAlive: true,
+    },
   },
 ];
 

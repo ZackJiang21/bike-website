@@ -1,8 +1,17 @@
 <template>
   <div id="app">
-    <transition name="fade" mode="out-in">
-      <router-view />
-    </transition>
+    <keep-alive>
+      <router-view v-if="$route.meta.keepAlive"></router-view>
+    </keep-alive>
+    <router-view v-if="!$route.meta.keepAlive"></router-view>
+    <van-tabbar route>
+      <van-tabbar-item replace to="/web" icon="home-o">
+        Measurement
+      </van-tabbar-item>
+      <van-tabbar-item replace to="/measurement" icon="search">
+        Definition
+      </van-tabbar-item>
+    </van-tabbar>
   </div>
 </template>
 

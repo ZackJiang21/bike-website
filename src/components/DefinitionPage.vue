@@ -32,6 +32,26 @@
 </template>
 <script>
 import KeyPointImg from '../assets/keypoints_pose_25.jpg';
+import ankleAngle from '../assets/img/ankle_angle.png';
+import ankleAngleBottom from '../assets/img/ankle_angle_bottom.png';
+import ankleAngleRear from '../assets/img/ankle_angle_rear.png';
+import ankleAngleAtTop from '../assets/img/ankle_angle_top.png';
+import ankleAngleAtFront from '../assets/img/ankle_angle_front.png';
+import kneeAngle from '../assets/img/knee_angle.png';
+import hipAngle from '../assets/img/hip_angle.png';
+import backFromLevel from '../assets/img/back_from_level.png';
+import shoulderAnkleWrist from '../assets/img/hip_shoulder_wrist.png';
+import elbowAngle from '../assets/img/hip_shoulder_elbow.png';
+import forearmAngle from '../assets/img/forearm_from_level.png';
+import kneeFootForward from '../assets/img/knee_to_foot_forward.png';
+import kneeFootLateral from '../assets/img/knee_to_feet_lateral.png';
+import hipFootLateral from '../assets/img/hip_to_foot_lateral.png';
+import shoulderWristLateral from '../assets/img/shoulder_to_wrist_lateral.png';
+import footFromLevel from '../assets/img/foot_from_level.png';
+import kneeLateralTravel from '../assets/img/knee_lateral_travel.png';
+import hipVerticalTravel from '../assets/img/hip_vertical_travel.png';
+import hipLateralTravel from '../assets/img/hip_lateral_travel.png';
+import markerPath from '../assets/img/marker_path.png';
 
 export default {
   name: 'DefinitionPage',
@@ -58,110 +78,89 @@ export default {
           'Illustration of Skeleton': '',
         },
       }, {
-        image: '../../static/img/ankle_angle.png',
+        image: ankleAngle,
         definition: {
           'Ankle Minimum': 'Maximum dorsiflexion at any point in the pedal stroke defined by the knee-ankle line and the heel-foot-line.',
           'Ankle Maximun': 'Maximum plantarflexion at any point in the pedal stroke defined by the knee-ankle line and the heel-foot-line.',
         },
       }, {
-        image: '../../static/img/ankle_angle.png',
+        image: ankleAngle,
         definition: { 'Ankle Range': 'The difference between ankle maximum and ankle minimum.' },
       }, {
-        image: '../../static/img/ankle_angle_top.png',
+        image: ankleAngleAtTop,
         definition: { 'Ankle Angle at Top': 'The ankle angle at the top of the pedal stroke (0 degrees).' },
       }, {
-        image: '../../static/img/ankle_angle_front.png',
+        image: ankleAngleAtFront,
         definition: { 'Ankle Angle at Front': 'The ankle angle at the front of the pedal stroke (90 degrees).' },
       }, {
-        image: '../../static/img/ankle_angle_bottom.png',
+        image: ankleAngleBottom,
         definition: { 'Ankle Angle at Bottom': 'The ankle angle at the bottom of the pedal stroke (180 degrees).' },
       }, {
-        image: '../../static/img/ankle_angle_rear.png',
+        image: ankleAngleRear,
         definition: { 'Ankle Angle at Rear': 'The ankle angle at the rear of the pedal stroke (270 degrees).' },
       }, {
-        image: '../../static/img/knee_angle.png',
+        image: kneeAngle,
         definition: {
           'Maximum Knee Flexion': 'Maximum flexion of the knee joint at any point in the pedal stroke defined by the hip-knee line and the knee-ankle line',
           'Maximum Knee Extension': 'Maximum extension of the knee joint at any point in the pedal stroke defined by the hip-knee line and the knee-ankle line',
         },
       }, {
-        image: '../../static/img/knee_angle.png',
+        image: kneeAngle,
         definition: { 'Knee Angle Range': 'The difference between knee angle flexion and knee angle extension.' },
       }, {
-        image: '../../static/img/hip_angle.png',
+        image: hipAngle,
         definition: {
           'Hip Angle Closed': 'The most closed angle of the hip joint defined by the knee, hip and shoulder marker.',
           'Hip Angle Open': 'The most open angle of the hip joint defined by the knee, hip and shoulder marker.',
           'Hip Angle Range': 'The difference between hip angle open and closed.',
         },
       }, {
-        image: '../../static/img/back_from_level.png',
+        image: backFromLevel,
         definition: { 'Back Angle': 'The angle of the back relative to the horizon defined by the hip and shoulder marker' },
       }, {
-        image: '../../static/img/hip_shoulder_elbow.png',
+        image: shoulderAnkleWrist,
         definition: {
           'Shoulder Angle to Wrist': 'The angle of the shoulder joint defined by the hip, shoulder, and wrist markers.',
           'Shoulder Angle to Elbow': 'The angle of the shoulder joint defined by the hip, shoulder, and elbow markers.',
         },
       }, {
-        image: '../../static/img/elbow_angle.png',
+        image: elbowAngle,
         definition: { 'Elbow Angle': 'The angle of the elbow joint defined by the shoulder, elbow, and wrist marker' },
       }, {
-        image: '../../static/img/forearm_from_level.png',
+        image: forearmAngle,
         definition: { 'Forearm Angle': 'The angle of the forearm relative to the horizon defined by the elbow and wrist markers. A positive number indicates the wrist is higher than the elbow' },
       }, {
-        image: '../../static/img/knee_forward_of_foot.png',
+        image: kneeFootForward,
         definition: { 'Knee Forward of Foot': 'The fore/aft offset of the knee marker relative to the foot marker captured at the forward part of the pedal stroke (3 o\'clock or 90 degrees down). A negative number indicates a knee that is aft of neutral.' },
       }, {
-        image: '../../static/img/knee_forward_of_foot.png',
+        image: kneeFootForward,
         definition: { 'Knee Forward of Spindle': 'The fore/aft offset of the knee marker relative to the pedal spindle at 3 o\'clock in the pedal stroke (90 degrees in the downstroke).' },
       }, {
-        image: '../../static/img/knee_to_feet_lateral.png',
+        image: kneeFootLateral,
         definition: { 'Knee Varus/Valgus (prior KFLO)': 'The lateral offset between the knee and foot markers. A negative number indicates the knee is in valgus. A positive number indicates the knee is in varus.' },
       }, {
-        image: '../../static/img/hip_to_foot_lateral.png',
+        image: hipFootLateral,
         definition: { 'Hip to Foot Lateral Offset': 'The lateral offset between the hip and foot marker. A negative number indicates the hip is outside the foot. A positive number indicates that the hip is inside the foot.' },
       }, {
-        image: '../../static/img/shoulder_to_wrist_lateral.png',
+        image: shoulderWristLateral,
         definition: { 'Shoulder to Wrist Lateral Offset': 'The lateral offset between the shoulder and wrist markers. A negative number indicates the wrist is inside the shoulder (TT bike). A positive number indicates the wrist is outside the shoulder (MTB).' },
       }, {
-        image: '../../static/img/foot_from_level.png',
+        image: footFromLevel,
         definition: { 'Foot from Level Mean': 'The angle of the foot relative to the horizon defined by the heel and forefoot marker' },
       }, {
-        image: '../../static/img/foot_angle.png',
-        definition: { 'Foot Rotation Minimum': 'The minimum rotational angle of the foot relative to the bike plane defined by the heel and forefoot marker. A negative number indicates that the foot is externally rotated (heel closer to the bike than the forefoot). A positive number indicates the foot is internally rotated (forefoot closer to the bike than the heel).' },
-      }, {
-        image: '../../static/img/foot_angle.png',
-        definition: { 'Foot Rotation Maximum': 'The maximum rotational angle of the foot relative to the bike plane defined by the heel and forefoot marker. A negative number indicates that the foot is externally rotated (heel closer to the bike than the forefoot). A positive number indicates the foot is internally rotated (forefoot closer to the bike than the heel)' },
-      }, {
-        image: '../../static/img/foot_angle.png',
-        definition: { 'Foot Rotation Mean': 'The average rotational angle of the foot relative to the bike plane defined by the heel and foot marker. A negative number indicates that the foot is externally rotated (heel closer to the bike than the forefoot). A positive number indicates that the foot is internally rotated (forefoot closer to the bike than the heel)' },
-      }, {
-        image: '../../static/img/knee_travel_tilt.png',
+        image: kneeLateralTravel,
         definition: { 'Knee Travel Tilt': 'The frontal plane angle of the tracing created by the moving knee marker with respect to vertical. A positive number indicates a knee that tracks away from the bike in the upstroke. A negative number represents a knee that tracks towards the bike in the upstroke. See the front view of the knee path for visual representation of this measurement.' },
       }, {
-        image: '../../static/img/knee_lateral_travel.png',
+        image: kneeLateralTravel,
         definition: { 'Knee Lateral Travel': 'The magnitude of the lateral movement of the knee' },
       }, {
-        image: '../../static/img/hip_vertical_travel.png',
+        image: hipVerticalTravel,
         definition: { 'Hip Vertical Travel': 'The magnitude of the vertical movement of the hip' },
       }, {
-        image: '../../static/img/hip_lateral_travel.png',
+        image: hipLateralTravel,
         definition: { 'Hip Lateral Travel': 'The magnitude of the lateral movement of the hip' },
       }, {
-        image: '../../static/img/thigh_length.png',
-        definition: {
-          'Thigh Length': 'The length of the hip/knee segment',
-          'Shin Length': 'The length of the knee/ankle segment',
-        },
-      }, {
-        image: '../../static/img/hip_to_elbow.png',
-        definition: {
-          'Hip to Elbow Vertical': 'The vertical offset of the elbow relative to the hip marker.',
-          'Hip to Elbow Horizontal': 'The horizontal offset of the elbow relative to the hip marker',
-        },
-      }, {
-        image: '../../static/img/marker_path.png',
+        image: markerPath,
         definition: {
           'Front View of Knee Path': 'Knee tracking measurement; green is downstroke; red is upstroke. The blue cone represents +/- 3 degrees on the knee travel tilt angle.',
         },
