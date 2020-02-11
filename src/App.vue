@@ -5,10 +5,12 @@
     </keep-alive>
     <router-view v-if="!$route.meta.keepAlive"></router-view>
     <van-tabbar v-if="$route.meta.showNav" route>
-      <van-tabbar-item replace to="/web" icon="home-o">
+      <van-tabbar-item replace to="/web">
+        <van-icon class="iconfont" class-prefix='icon' name='measure'/>
         Measurement
       </van-tabbar-item>
-      <van-tabbar-item replace to="/def" icon="search">
+      <van-tabbar-item replace to="/def">
+        <van-icon class="iconfont" class-prefix='icon' name='Note'/>
         Definition
       </van-tabbar-item>
     </van-tabbar>

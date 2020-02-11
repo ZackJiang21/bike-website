@@ -5,22 +5,6 @@
       <img class="header-logo" src="@/assets/Logo-01.svg"/>
       <div class="navbar-btn">
         <el-button
-          v-if="!isDefinition"
-          @click="onShowDef"
-          type="primary"
-        >
-          Definitions
-          <span class="el-icon-notebook-2 el-icon--right"></span>
-        </el-button>
-        <el-button
-          v-if="isDefinition"
-          type="primary"
-          @click="handleHideDef"
-        >
-          Measurement
-          <span class="el-icon-data-line el-icon--right"></span>
-        </el-button>
-        <el-button
           v-if="!isProcessing"
           type="primary"
           @click="handleStartProcess"
@@ -175,7 +159,7 @@
           </div>
         </transition>
         <transition name="slide-fade">
-          <div v-show="!isShowLogIn && !isDefinition" class="right-panel-item" key="measurement">
+          <div v-show="!isShowLogIn" class="right-panel-item" key="measurement">
             <el-table
               :data="tableData"
               size="mini"
@@ -255,11 +239,6 @@
             </el-table>
           </div>
         </transition>
-        <transition name="slide-fade">
-          <div v-show="!isShowLogIn && isDefinition" class="right-panel-item" key="definition">
-            <definition-page :max-height="resolution.tableHeight"/>
-          </div>
-        </transition>
       </el-card>
     </div>
   </div>
@@ -270,7 +249,6 @@
 import io from 'socket.io-client';
 import VueFabric from '../components/fabric.vue';
 import SkeletonCard from '../components/SkeletonCard.vue';
-import DefinitionPage from '../components/DefinitionPage.vue';
 import LogInPage from '../components/LogInPage.vue';
 import generateReport from '../utils/report';
 
@@ -497,7 +475,6 @@ export default {
   components: {
     VueFabric,
     SkeletonCard,
-    DefinitionPage,
     LogInPage,
   },
   computed: {
@@ -525,7 +502,6 @@ export default {
       },
       ratio: 1,
       isProcessing: false,
-      isDefinition: false,
       fittingData: {
         angles: {},
         distance: {},
@@ -603,7 +579,6 @@ export default {
       this.isShowLogIn = false;
     },
     onShowLogIn() {
-      this.isDefinition = false;
       this.isShowLogIn = true;
     },
     onLogInBack() {
@@ -1102,13 +1077,6 @@ export default {
       this.isProcessing = false;
       this.hasReport = true;
       socket.emit('cancel_process');
-    },
-    onShowDef() {
-      this.isShowLogIn = false;
-      this.isDefinition = true;
-    },
-    handleHideDef() {
-      this.isDefinition = false;
     },
     processTableSpan(table) {
       // is Knee Path

@@ -3,7 +3,7 @@ import VueRouter from 'vue-router';
 import HomeWeb from '../views/HomeWeb.vue';
 import Index from '../views/Index.vue';
 import Measurement from '../views/Measurement.vue';
-import DefinitionPage from '../components/DefinitionPage.vue';
+import Definition from '../views/Definition.vue';
 
 Vue.use(VueRouter);
 
@@ -33,7 +33,7 @@ const routes = [
   {
     path: '/def',
     name: 'definition',
-    component: DefinitionPage,
+    component: Definition,
     meta: {
       keepAlive: true,
       showNav: true,

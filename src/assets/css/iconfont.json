@@ -1,0 +1,72 @@
+{
+  "id": "1606433",
+  "name": "vue",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "1802979",
+      "name": "measure",
+      "font_class": "measure",
+      "unicode": "e615",
+      "unicode_decimal": 58901
+    },
+    {
+      "icon_id": "12002070",
+      "name": "Note",
+      "font_class": "Note",
+      "unicode": "ea26",
+      "unicode_decimal": 59942
+    },
+    {
+      "icon_id": "5127193",
+      "name": "body",
+      "font_class": "body",
+      "unicode": "e72a",
+      "unicode_decimal": 59178
+    },
+    {
+      "icon_id": "1238466",
+      "name": "preview",
+      "font_class": "el-icon-ali-preview",
+      "unicode": "e609",
+      "unicode_decimal": 58889
+    },
+    {
+      "icon_id": "7275356",
+      "name": "email",
+      "font_class": "el-icon-ali-email",
+      "unicode": "e68b",
+      "unicode_decimal": 59019
+    },
+    {
+      "icon_id": "961417",
+      "name": "report",
+      "font_class": "el-icon-ali-report",
+      "unicode": "e611",
+      "unicode_decimal": 58897
+    },
+    {
+      "icon_id": "7683691",
+      "name": "change_owner",
+      "font_class": "el-icon-ali-change",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "309628",
+      "name": "log-out",
+      "font_class": "el-icon-ali-logout",
+      "unicode": "e637",
+      "unicode_decimal": 58935
+    },
+    {
+      "icon_id": "12478351",
+      "name": "Bike",
+      "font_class": "el-icon-ali-bike",
+      "unicode": "e95c",
+      "unicode_decimal": 59740
+    }
+  ]
+}
