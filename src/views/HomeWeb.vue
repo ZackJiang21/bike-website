@@ -1227,15 +1227,6 @@ export default {
     background: oldlace;
   }
 
-  .slide-fade-enter-active, .slide-fade-leave-active {
-    transition: all .5s ease;
-  }
-
-  .slide-fade-enter, .slide-fade-leave-to
-    /* .slide-fade-leave-active for below version 2.1.8 */ {
-    transform: translateX(200px);
-    opacity: 0;
-  }
   .right-panel-item {
     position: absolute;
     top: 20px;
