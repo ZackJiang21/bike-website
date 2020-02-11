@@ -27,14 +27,6 @@
         >
           Generate Report
         </el-button>
-        <el-button
-          v-if="isShowLogInBtn"
-          type="primary"
-          @click="onShowLogIn"
-        >
-          Log In
-          <span class="el-icon-user-solid el-icon--right"></span>
-        </el-button>
         <el-dropdown
           class="user-drop-down"
           v-if="hasRiderInfo"
@@ -49,11 +41,6 @@
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item
-              command="change"
-              icon="icon-el-icon-ali-change">
-              Change User
-            </el-dropdown-item>
-            <el-dropdown-item
               command="logout"
               icon="icon-el-icon-ali-logout"
             >
@@ -63,7 +50,7 @@
         </el-dropdown>
       </div>
     </div>
-    <div class="body">
+    <div v-if="hasRiderInfo" class="panel-body">
       <div class="left-panel">
         <div class="left-panel-row">
           <skeleton-card
@@ -149,96 +136,93 @@
         </div>
       </div>
       <el-card class="right-panel">
-        <transition name="slide-fade">
-          <div v-show="isShowLogIn" class="right-panel-item" key="login">
-            <log-in-page
-              :max-height="resolution.tableHeight"
-              @selected-rider-event="onSelectRider"
-              @log-in-back="onLogInBack">
-            </log-in-page>
-          </div>
-        </transition>
-        <transition name="slide-fade">
-          <div v-show="!isShowLogIn" class="right-panel-item" key="measurement">
-            <el-table
-              :data="tableData"
-              size="mini"
-              :max-height="resolution.tableHeight"
-              :span-method="processTableSpan"
-              :cell-class-name="processCellClass"
-              :row-class-name="processRowClass"
-              :row-style="resolution.tableRowStyle"
-              border
-              style="width: 100%; height: 100%">
-              <el-table-column
-                label=""
-                width="100"
-                fixed>
+        <div class="right-panel-item" key="measurement">
+          <el-table
+            :data="tableData"
+            size="mini"
+            :max-height="resolution.tableHeight"
+            :span-method="processTableSpan"
+            :cell-class-name="processCellClass"
+            :row-class-name="processRowClass"
+            :row-style="resolution.tableRowStyle"
+            border
+            style="width: 100%; height: 100%">
+            <el-table-column
+              label=""
+              width="100"
+              fixed>
+              <template slot-scope="scope">
+                <img :src="scope.row.src" class="bike-icon"/>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="title"
+              width="160"
+              label="Title"
+              fixed
+            >
+            </el-table-column>
+            <el-table-column label="Left">
+              <el-table-column label="Max Less">
                 <template slot-scope="scope">
-                  <img :src="scope.row.src" class="bike-icon"/>
+                  <div v-if="scope.row.isKneePath">
+                    <canvas id="knee_path" width="180px" height="320px"></canvas>
+                  </div>
+                  <span v-else>
+                      {{scope.row.lessLeft}}
+                    </span>
                 </template>
               </el-table-column>
               <el-table-column
-                prop="title"
-                width="160"
-                label="Title"
-                fixed
-              >
-              </el-table-column>
-              <el-table-column label="Left">
-                <el-table-column label="Max Less">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.isKneePath">
-                      <canvas id="knee_path" width="180px" height="320px"></canvas>
-                    </div>
-                    <span v-else>
-                      {{scope.row.lessLeft}}
-                    </span>
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  prop="left"
-                  label="Current"
-                >
-                </el-table-column>
-                <el-table-column
-                  prop="moreLeft"
-                  label="Max More"
-                >
-                </el-table-column>
-              </el-table-column>
-              <el-table-column
-                label="Right"
-              >
-                <el-table-column
-                  prop="lessRight"
-                  label="Max Less"
-                >
-                </el-table-column>
-                <el-table-column
-                  prop="right"
-                  label="Current"
-                >
-                </el-table-column>
-                <el-table-column
-                  prop="moreRight"
-                  label="Max More"
-                >
-                </el-table-column>
-              </el-table-column>
-              <el-table-column
-                prop="range"
-                label="Range"
+                prop="left"
+                label="Current"
               >
               </el-table-column>
               <el-table-column
-                prop="units"
-                label="Units"
+                prop="moreLeft"
+                label="Max More"
               >
               </el-table-column>
-            </el-table>
-          </div>
-        </transition>
+            </el-table-column>
+            <el-table-column
+              label="Right"
+            >
+              <el-table-column
+                prop="lessRight"
+                label="Max Less"
+              >
+              </el-table-column>
+              <el-table-column
+                prop="right"
+                label="Current"
+              >
+              </el-table-column>
+              <el-table-column
+                prop="moreRight"
+                label="Max More"
+              >
+              </el-table-column>
+            </el-table-column>
+            <el-table-column
+              prop="range"
+              label="Range"
+            >
+            </el-table-column>
+            <el-table-column
+              prop="units"
+              label="Units"
+            >
+            </el-table-column>
+          </el-table>
+        </div>
+      </el-card>
+    </div>
+    <div class="login-panel" v-else>
+      <el-card :body-style="{height: `${resolution.tableHeight}px`}">
+        <log-in-page
+          :max-height="resolution.tableHeight"
+          @selected-rider-event="onSelectRider">
+        </log-in-page>
       </el-card>
     </div>
   </div>
@@ -478,12 +462,6 @@ export default {
     LogInPage,
   },
   computed: {
-    isShowLogInBtn() {
-      if (!this.isShowLogIn && !this.hasRiderInfo) {
-        return true;
-      }
-      return false;
-    },
   },
   data() {
     return {
@@ -514,7 +492,6 @@ export default {
       }),
       hasRiderInfo: false,
       riderInfo: {},
-      isShowLogIn: false,
     };
   },
   mounted() {
@@ -569,20 +546,11 @@ export default {
       if (command === 'logout') {
         this.hasRiderInfo = false;
         this.riderInfo = {};
-      } else if (command === 'change') {
-        this.isShowLogIn = true;
       }
     },
     onSelectRider(rider) {
       this.riderInfo = rider;
       this.hasRiderInfo = true;
-      this.isShowLogIn = false;
-    },
-    onShowLogIn() {
-      this.isShowLogIn = true;
-    },
-    onLogInBack() {
-      this.isShowLogIn = false;
     },
     calculateHeight() {
       const MARGIN_TOP = 100;
@@ -1190,11 +1158,15 @@ export default {
     vertical-align: middle;
   }
 
-  .body {
+  .panel-body {
     margin-top: 100px;
     display: flex;
     flex-direction: row;
     padding: 0 20px;
+  }
+  .login-panel {
+    padding-top: 100px;
+    margin: 0 20px;
   }
 
   .left-panel-row {

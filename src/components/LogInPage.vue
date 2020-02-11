@@ -1,6 +1,13 @@
 <template>
   <div>
-    <el-page-header @back="onBack"></el-page-header>
+    <van-notice-bar
+      color="#1989fa"
+      background="#ecf9ff"
+      left-icon="info-o"
+      style="margin-bottom: 5px"
+    >
+      Select user and bike to begin bike fitting.
+    </van-notice-bar>
     <el-steps :active="stepActive" process-status="process" finish-status="success" simple>
       <el-step title="Choose User" icon="el-icon-user-solid">
       </el-step>
@@ -100,9 +107,6 @@ export default {
     },
   },
   methods: {
-    onBack() {
-      this.$emit('log-in-back');
-    },
     onNextStep() {
       this.stepActive += 1;
     },

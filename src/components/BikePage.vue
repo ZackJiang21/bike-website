@@ -15,6 +15,7 @@
       <div>
         <el-table
           :data="bikeData"
+          @row-click="onSelectRow"
           :max-height="getTableHeight"
           :height="getTableHeight">
           <el-table-column width="35" fixed>
@@ -155,7 +156,7 @@ export default {
   },
   computed: {
     getTableHeight() {
-      const headerHeight = 24;
+      const headerHeight = 45;
       const stepHeight = 46;
       const btnGrpHeight = 60;
       const bottomHeight = 60;
@@ -190,6 +191,10 @@ export default {
     },
     onSelectBike(bike) {
       this.$emit('select-bike-event', bike);
+    },
+    onSelectRow(row) {
+      this.selectedId = row.id;
+      this.$emit('select-bike-event', row);
     },
     onSubmit() {
       this.$refs.createBikeForm.validate((valid) => {

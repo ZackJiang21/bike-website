@@ -28,6 +28,7 @@
           :data="displayUserData"
           :max-height="getTableHeight"
           :height="getTableHeight"
+          @row-click="onSelectRow"
           style="width: 100%; height: 100%"
         >
           <el-table-column width="45" fixed>
@@ -60,13 +61,11 @@
           <el-table-column
             label="Phone"
             prop="phone"
-            width="150"
             show-overflow-tooltip>
           </el-table-column>
           <el-table-column
             label="Email"
             prop="email"
-            width="200"
             show-overflow-tooltip>
           </el-table-column>
           <el-table-column label="Operation" width="110" fixed="right">
@@ -162,7 +161,7 @@ export default {
   },
   computed: {
     getTableHeight() {
-      const headerHeight = 24;
+      const headerHeight = 45;
       const stepHeight = 46;
       const btnGrpHeight = 60;
       const bottomHeight = 60;
@@ -298,6 +297,10 @@ export default {
         });
         this.displayUserData = searchedUserData;
       }
+    },
+    onSelectRow(row) {
+      this.selectedId = row.id;
+      this.$emit('select-user-event', row);
     },
   },
   mounted() {
