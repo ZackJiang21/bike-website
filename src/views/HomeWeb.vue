@@ -1,14 +1,12 @@
 <template>
   <div class="page">
-    <div class="header">
-      <img class="header-logo" src="@/assets/g42-logo.svg"/>
-      <img class="header-logo" src="@/assets/Logo-01.svg"/>
+    <bike-header>
       <div class="navbar-btn">
         <el-button
           v-if="hasRiderInfo && !isProcessing"
           type="primary"
           @click="handleStartProcess"
-          >
+        >
           Get Started
           <span class="el-icon-caret-right el-icon--right"></span>
         </el-button>
@@ -48,7 +46,7 @@
           </el-dropdown-menu>
         </el-dropdown>
       </div>
-    </div>
+    </bike-header>
     <div v-if="hasRiderInfo" class="panel-body">
       <div class="left-panel">
         <div class="left-panel-row">
@@ -212,6 +210,7 @@ import footFromLevel from '../assets/img/foot_from_level.png';
 import kneeLateralTravel from '../assets/img/knee_lateral_travel.png';
 import hipVerticalTravel from '../assets/img/hip_vertical_travel.png';
 import hipLateralTravel from '../assets/img/hip_lateral_travel.png';
+import BikeHeader from '../components/BikeHeader.vue';
 
 const CANVAS_PREFIX = 'canvas_';
 const VIDEO_PREFIX = '#video_';
@@ -409,6 +408,7 @@ const LINE_INDEX = {
 export default {
   name: 'home',
   components: {
+    BikeHeader,
     VueFabric,
     SkeletonCard,
     LogInPage,
@@ -904,27 +904,6 @@ export default {
 <style>
   .page {
     height: 100%;
-  }
-
-  .header {
-    height: 80px;
-    width: 100%;
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: 0;
-    background-color: #2c3e50;
-    padding: 0 20px;
-    z-index: 999;
-    box-sizing: border-box;
-  }
-
-  .header-logo {
-    display: inline-block;
-    float: left;
-    height: 60px;
-    padding: 8px 0;
-    margin-left: 20px;
   }
 
   .navbar-btn {
