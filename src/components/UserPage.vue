@@ -31,7 +31,7 @@
           @row-click="onSelectRow"
           style="width: 100%; height: 100%"
         >
-          <el-table-column width="45" fixed>
+          <el-table-column width="45">
             <template slot-scope="scope">
               <el-radio
                 v-model="selectedId"
@@ -45,7 +45,6 @@
             label="Name"
             prop="name"
             width="240"
-            fixed
           >
           </el-table-column>
           <el-table-column
@@ -68,7 +67,7 @@
             prop="email"
             show-overflow-tooltip>
           </el-table-column>
-          <el-table-column label="Operation" width="110" fixed="right">
+          <el-table-column label="Operation" width="110">
             <template slot-scope="scope">
               <el-button
                 type="danger"

@@ -18,7 +18,7 @@
           @row-click="onSelectRow"
           :max-height="getTableHeight"
           :height="getTableHeight">
-          <el-table-column width="35" fixed>
+          <el-table-column width="35">
             <template slot-scope="scope">
               <el-radio
                 v-model="selectedId"
@@ -44,7 +44,7 @@
             label="Type"
             prop="type">
           </el-table-column>
-          <el-table-column label="Operation" width="110" fixed="right">
+          <el-table-column label="Operation" width="110">
             <template slot-scope="scope">
               <el-button
                 type="danger"
