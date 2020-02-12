@@ -5,7 +5,7 @@
     </keep-alive>
     <router-view v-if="!$route.meta.keepAlive"></router-view>
     <van-tabbar v-if="$route.meta.showNav" route>
-      <van-tabbar-item replace to="/web">
+      <van-tabbar-item replace to="/home">
         <van-icon class="iconfont" class-prefix='icon' name='measure'/>
         Measurement
       </van-tabbar-item>
