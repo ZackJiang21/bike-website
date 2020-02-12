@@ -989,14 +989,6 @@ export default {
     max-height: 100%;
   }
 
-  .bike-table-cell {
-    padding: 3px 0 !important;
-  }
-
-  .el-table .warning-row {
-    background: oldlace;
-  }
-
   .right-panel-item {
     position: absolute;
     top: 20px;
