@@ -9,17 +9,95 @@
       <van-col span="10">
         <div class="measurement-content">
           <div class="side-left">Left</div>
-          <div>Max Less: {{data.left.less}}</div>
-          <div>Current: {{data.left.value}}</div>
-          <div>Max More: {{data.left.more}}</div>
+          <div>
+            <span>
+              Max Less: {{data.left.less}}
+              <span v-if="data.left.less !== '--'">
+                <span v-if="data.unit === 'deg'">
+                  &deg;
+                </span>
+                <span v-else-if="data.unit === 'mm'">
+                  mm
+                </span>
+              </span>
+            </span>
+          </div>
+          <div>
+            <span>
+              Current:
+              <span :class="data.left.warning ? 'warn-val': ''">
+                {{data.left.value}}
+              </span>
+              <span v-if="data.left.value !== '--'">
+                <span v-if="data.unit === 'deg'">
+                  &deg;
+                </span>
+                <span v-else-if="data.unit === 'mm'">
+                  mm
+                </span>
+              </span>
+            </span>
+          </div>
+          <div>
+            <span>
+              Max More: {{data.left.more}}
+              <span v-if="data.left.more !== '--'">
+                <span v-if="data.unit === 'deg'">
+                  &deg;
+                </span>
+                <span v-else-if="data.unit === 'mm'">
+                  mm
+                </span>
+              </span>
+            </span>
+          </div>
         </div>
       </van-col>
       <van-col span="10">
         <div class="measurement-content">
           <div class="side-right">Right</div>
-          <div>Max Less: {{data.left.less}}</div>
-          <div>Current: {{data.left.value}}</div>
-          <div>Max More: {{data.left.more}}</div>
+          <div>
+            <span>
+              Max Less: {{data.right.less}}
+              <span v-if="data.right.less !== '--'">
+                <span v-if="data.unit === 'deg'">
+                  &deg;
+                </span>
+                <span v-else-if="data.unit === 'mm'">
+                  mm
+                </span>
+              </span>
+            </span>
+          </div>
+          <div>
+            <span>
+              Current:
+              <span :class="data.right.warning ? 'warn-val': ''">
+                {{data.right.value}}
+              </span>
+              <span v-if="data.right.value !== '--'">
+                <span v-if="data.unit === 'deg'">
+                  &deg;
+                </span>
+                <span v-else-if="data.unit === 'mm'">
+                  mm
+                </span>
+              </span>
+            </span>
+          </div>
+          <div>
+            <span>
+              Max More: {{data.right.more}}
+              <span v-if="data.right.more !== '--'">
+                <span v-if="data.unit === 'deg'">
+                  &deg;
+                </span>
+                <span v-else-if="data.unit === 'mm'">
+                  mm
+                </span>
+              </span>
+            </span>
+          </div>
         </div>
       </van-col>
     </van-row>
@@ -57,6 +135,9 @@ export default {
   }
   .side-right {
     color: #1c90bf;
+  }
+  .warn-val {
+    color: red;
   }
   .bike-icon {
     position: absolute;

@@ -574,7 +574,12 @@ export default {
         value: this.getFittingValue(object, key, side),
         less: this.getFittingValue(object, key, `${side}_less_than_range`),
         more: this.getFittingValue(object, key, `${side}_more_than_range`),
+        warning: this.getFittingValue(object, key, `${side}_exceed_range`, true),
       };
+    },
+    isWarning(object, key) {
+      return this.getFittingValue(object, key, 'left_exceed_range', true)
+        || this.getFittingValue(object, key, 'right_exceed_range', true);
     },
     getMeasurement(data) {
       const { angles, distance } = data;
@@ -588,7 +593,7 @@ export default {
             rangeStart: 65,
             rangeEnd: 75,
             unit: 'deg',
-            isWarn: false,
+            isWarn: this.isWarning(angles, 'Ankle_Angle_Min'),
           },
           {
             title: 'Ankle Angle Max',
@@ -598,7 +603,7 @@ export default {
             rangeStart: 90,
             rangeEnd: 100,
             unit: 'deg',
-            isWarn: false,
+            isWarn: this.isWarning(angles, 'Ankle_Angle_Max'),
           },
           {
             title: 'Ankle Angle Range',
@@ -608,7 +613,7 @@ export default {
             rangeStart: 20,
             rangeEnd: 30,
             unit: 'deg',
-            isWarn: false,
+            isWarn: this.isWarning(angles, 'Ankle_Angle_Range'),
           },
           {
             title: 'Ankle Angle at Bottom',
@@ -618,7 +623,7 @@ export default {
             rangeStart: 90,
             rangeEnd: 100,
             unit: 'deg',
-            isWarn: false,
+            isWarn: this.isWarning(angles, 'Ankle_Angle_Bottom'),
           },
           {
             title: 'Ankle Angle at Rear',
@@ -652,7 +657,7 @@ export default {
             rangeStart: 107,
             rangeEnd: 113,
             unit: 'deg',
-            isWarn: false,
+            isWarn: this.isWarning(angles, 'Knee_Angle_Max'),
           },
           {
             title: 'Knee Angle Extension',
@@ -662,7 +667,7 @@ export default {
             rangeStart: 33,
             rangeEnd: 42,
             unit: 'deg',
-            isWarn: false,
+            isWarn: this.isWarning(angles, 'Knee_Angle_Min'),
           },
           {
             title: 'Knee Angle Range',
@@ -672,7 +677,7 @@ export default {
             rangeStart: 70,
             rangeEnd: 75,
             unit: 'deg',
-            isWarn: false,
+            isWarn: this.isWarning(angles, 'Knee_Angle_Range'),
           },
           {
             title: 'Hip Angle Closed',
@@ -682,7 +687,7 @@ export default {
             rangeStart: 46,
             rangeEnd: 56,
             unit: 'deg',
-            isWarn: false,
+            isWarn: this.isWarning(angles, 'Hip_Angle_Min'),
           },
           {
             title: 'Hip Angle Open',
@@ -700,7 +705,7 @@ export default {
             rangeStart: 40,
             rangeEnd: 45,
             unit: 'deg',
-            isWarn: false,
+            isWarn: this.isWarning(angles, 'Hip_Angle_Range'),
           },
           {
             title: 'Back From Level',
@@ -710,7 +715,7 @@ export default {
             rangeStart: 20,
             rangeEnd: 35,
             unit: 'deg',
-            isWarn: false,
+            isWarn: this.isWarning(angles, 'Back_From_Level'),
           },
           {
             title: 'Back From Level Mean',
@@ -720,7 +725,7 @@ export default {
             rangeStart: 20,
             rangeEnd: 35,
             unit: 'deg',
-            isWarn: false,
+            isWarn: this.isWarning(angles, 'Back_From_Level_Average'),
           },
           {
             title: 'Shoulder Angle Wrist',
@@ -746,7 +751,7 @@ export default {
             rangeStart: 70,
             rangeEnd: 80,
             unit: 'deg',
-            isWarn: false,
+            isWarn: this.isWarning(angles, 'Hip_Shoulder_Elbow'),
           },
           {
             title: 'Shoulder Angle Elbow Mean',
@@ -756,7 +761,7 @@ export default {
             rangeStart: 70,
             rangeEnd: 80,
             unit: 'deg',
-            isWarn: false,
+            isWarn: this.isWarning(angles, 'Hip_Shoulder_Elbow_Average'),
           },
           {
             title: 'Elbow Angle',
@@ -800,7 +805,7 @@ export default {
             rangeStart: 65,
             rangeEnd: 75,
             unit: 'mm',
-            isWarn: false,
+            isWarn: this.isWarning(distance, 'Knee_to_Foot_Forward'),
           },
           {
             title: 'Knee to Foot Lateral',
@@ -852,7 +857,7 @@ export default {
             rangeStart: 5,
             rangeEnd: 36,
             unit: 'mm',
-            isWarn: false,
+            isWarn: this.isWarning(distance, 'Knee_Lateral_Travel'),
           },
           {
             title: 'Hip Vertical Travel',
@@ -870,7 +875,7 @@ export default {
             rangeStart: 5,
             rangeEnd: 20,
             unit: 'mm',
-            isWarn: false,
+            isWarn: this.isWarning(angles, 'Hip_Lateral_Travel'),
           },
         ],
       };
