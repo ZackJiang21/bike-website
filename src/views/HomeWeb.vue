@@ -954,12 +954,16 @@ export default {
     padding-left: 20px !important;
     border-bottom-width: 0 !important;
   }
+  .van-cell__title {
+    text-align: left !important;
+  }
 
   .img-container {
     overflow: hidden;
     position: relative;
     width: 90px;
     height: 90px;
+    margin-left: 16px;
   }
 
   .bike-icon {
