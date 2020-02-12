@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import HomeWeb from '../views/HomeWeb.vue';
 import Index from '../views/Index.vue';
 import Definition from '../views/Definition.vue';
+import Report from '../views/Report.vue';
 
 Vue.use(VueRouter);
 
@@ -27,6 +28,14 @@ const routes = [
     component: Definition,
     meta: {
       keepAlive: true,
+      showNav: true,
+    },
+  },
+  {
+    path: '/report',
+    name: 'report',
+    component: Report,
+    meta: {
       showNav: true,
     },
   },

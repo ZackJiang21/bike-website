@@ -67,7 +67,7 @@ const UNSELECT_USER_ID = -1;
 export default {
   name: 'LogInPage',
   props: {
-    maxHeight: {
+    tableHeight: {
       type: Number,
       required: true,
     },

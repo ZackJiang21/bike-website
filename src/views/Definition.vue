@@ -18,7 +18,7 @@ export default {
   },
   data() {
     return {
-      maxHeight: 0,
+      tableHeight: 0,
     };
   },
   methods: {

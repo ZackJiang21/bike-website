@@ -13,6 +13,10 @@
         <van-icon class="iconfont" class-prefix='icon' name='Note'/>
         Definition
       </van-tabbar-item>
+      <van-tabbar-item replace to="/report">
+        <van-icon class="iconfont" class-prefix='icon-el-icon-ali' name='report'/>
+        Report
+      </van-tabbar-item>
     </van-tabbar>
   </div>
 </template>

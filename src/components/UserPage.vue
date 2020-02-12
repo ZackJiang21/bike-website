@@ -153,7 +153,7 @@ const DEFAULT_FORM = {
 export default {
   name: 'UserPage',
   props: {
-    maxHeight: {
+    tableHeight: {
       type: Number,
       required: true,
     },
@@ -164,7 +164,7 @@ export default {
       const stepHeight = 46;
       const btnGrpHeight = 60;
       const bottomHeight = 60;
-      return this.maxHeight - stepHeight - headerHeight - btnGrpHeight - bottomHeight;
+      return this.tableHeight - stepHeight - headerHeight - btnGrpHeight - bottomHeight;
     },
   },
   data() {

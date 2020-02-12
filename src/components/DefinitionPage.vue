@@ -56,7 +56,7 @@ import markerPath from '../assets/img/marker_path.png';
 export default {
   name: 'DefinitionPage',
   props: {
-    maxHeight: {
+    tableHeight: {
       type: Number,
       required: true,
     },

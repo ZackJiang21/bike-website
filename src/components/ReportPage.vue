@@ -68,7 +68,7 @@ import { getAllUser } from '../api/user';
 export default {
   name: 'ReportPage',
   props: {
-    maxHeight: {
+    tableHeight: {
       type: Number,
       required: true,
     },
@@ -97,13 +97,13 @@ export default {
   computed: {
     asideStyle() {
       return {
-        height: `${this.maxHeight}px`,
+        height: `${this.tableHeight}px`,
         'background-color': '#D3DCE6',
       };
     },
     tableHeight() {
       const PADDING = 20;
-      return this.maxHeight - 2 * PADDING;
+      return this.tableHeight - 2 * PADDING;
     },
   },
 };
