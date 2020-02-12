@@ -988,14 +988,6 @@ export default {
     max-width: 100%;
     max-height: 100%;
   }
-
-  .right-panel-item {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    bottom: 20px;
-    right: 20px;
-  }
   .user-drop-down {
     margin-left: 10px;
   }
