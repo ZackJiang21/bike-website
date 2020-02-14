@@ -15,14 +15,14 @@
     </el-steps>
     <div v-show="stepActive===0">
       <user-page
-        :max-height="maxHeight"
+        :table-height="tableHeight"
         @select-user-event="onSelectUser"
         @create-event="onCreateEvent">
       </user-page>
     </div>
     <div v-show="stepActive===1">
       <bike-page
-        :max-height="maxHeight"
+        :table-height="tableHeight"
         :user-id="userId"
         @select-bike-event="onSelectBike"
         @create-event="onCreateEvent">

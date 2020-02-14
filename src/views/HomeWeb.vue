@@ -174,7 +174,7 @@
     <div class="login-panel" v-else>
       <el-card :body-style="{height: `${resolution.cardBodyHeight}px`}">
         <log-in-page
-          :max-height="resolution.cardBodyHeight"
+          :table-height="resolution.cardBodyHeight"
           @selected-rider-event="onSelectRider">
         </log-in-page>
       </el-card>
@@ -890,7 +890,7 @@ export default {
       this.clearFabricCanvas();
       this.isProcessing = false;
       this.hasReport = true;
-      socket.emit('cancel_process');
+      socket.emit('cancel_process', this.riderInfo);
     },
     reload() {
       this.isShowFabric = false;

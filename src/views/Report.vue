@@ -3,7 +3,10 @@
     <bike-header></bike-header>
     <el-container class="report-container">
       <el-aside :style="asideStyle">
-        <el-menu :default-active="activeIndex">
+        <el-menu
+          :default-active="activeUserId"
+          @select="onSelectUser"
+        >
           <el-menu-item-group>
             <template slot="title">
               <span class="el-icon-user-solid">Users</span>
@@ -31,14 +34,16 @@
             >
               <template slot-scope="scope">
                 <i class="el-icon-time"></i>
-                <span style="margin-left: 10px">{{ scope.row.date }}</span>
+                <span style="margin-left: 10px">
+                  {{ moment(scope.row.create_time * 1000).format('YYYY-MM-DD hh:mm a')}}
+                </span>
               </template>
             </el-table-column>
             <el-table-column
               label="Action"
               width="400"
             >
-              <template>
+              <template slot-scope="scope">
                 <el-button
                   type="primary"
                   size="mini"
@@ -54,6 +59,7 @@
                 <el-button
                   type="danger"
                   size="mini"
+                  @click="onDelReport(scope.row.id)"
                   plain>
                   Delete<i class="el-icon-delete el-icon--right"/>
                 </el-button>
@@ -66,7 +72,9 @@
   </div>
 </template>
 <script>
+import moment from 'moment';
 import { getAllUser } from '../api/user';
+import { getReportByUserId, deleteReport } from '../api/report';
 import BikeHeader from '../components/BikeHeader.vue';
 
 export default {
@@ -74,19 +82,12 @@ export default {
   components: { BikeHeader },
   data() {
     return {
+      moment,
       tableHeight: 0,
       sideHeight: 0,
-      activeIndex: 0,
+      activeUserId: '',
       users: [],
-      reportData: [{
-        id: 1,
-        name: 'Jiang_Zhang_2020-01-26',
-        date: '2020-01-26',
-      }, {
-        id: 2,
-        name: 'Jiang_Zhang_2020-01-26',
-        date: '2020-01-26',
-      }],
+      reportData: [],
     };
   },
   mounted() {
@@ -96,10 +97,14 @@ export default {
         .then((res) => {
           this.users = res;
           if (res.length > 0) {
-            this.activeIndex = String(res[0].id);
+            this.activeUserId = String(res[0].id);
+            getReportByUserId(this.activeUserId).then((reports) => {
+              this.reportData = reports;
+            });
           }
         });
     });
+    window.onresize = this.calHeight;
   },
   computed: {
     asideStyle() {
@@ -117,6 +122,28 @@ export default {
       const PADDING_MAIN = 40;
       this.sideHeight = windowHeight - PADDING_TOP - PADDING_BOTTOM;
       this.tableHeight = windowHeight - PADDING_TOP - PADDING_BOTTOM - PADDING_MAIN;
+    },
+    onSelectUser(userId) {
+      getReportByUserId(userId).then((reports) => {
+        this.reportData = reports;
+      });
+    },
+    onDelReport(reportId) {
+      this.$confirm('This will permanently delete the report. Continue?', 'Warning', {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning',
+      }).then(() => {
+        deleteReport(reportId).then(() => {
+          this.$message({
+            type: 'success',
+            message: 'Delete completed',
+          });
+          this.getUserData();
+        });
+      }).catch(() => {
+        console.log('delete canceled');
+      });
     },
   },
 };

@@ -3,7 +3,7 @@
     <el-table
     :data="definitions"
     size="mini"
-    :max-height="maxHeight"
+    :max-height="tableHeight"
     style="width: 100%; height: 100%"
     :row-class-name="getRowClass"
     >

@@ -2,7 +2,7 @@
   <div>
     <bike-header></bike-header>
     <div class="def-body">
-      <definition-page :max-height="maxHeight"></definition-page>
+      <definition-page :table-height="maxHeight"></definition-page>
     </div>
   </div>
 </template>
@@ -18,7 +18,7 @@ export default {
   },
   data() {
     return {
-      tableHeight: 0,
+      maxHeight: 0,
     };
   },
   methods: {
