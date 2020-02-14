@@ -47,6 +47,7 @@
                 <el-button
                   type="primary"
                   size="mini"
+                  @click="onSendReport(scope.row.id)"
                   plain>
                   Send<i class="icon-el-icon-ali-email el-icon--right"/>
                 </el-button>
@@ -83,7 +84,7 @@
 <script>
 import moment from 'moment';
 import { getAllUser } from '../api/user';
-import { getReportByUserId, deleteReport } from '../api/report';
+import { getReportByUserId, deleteReport, sendReport } from '../api/report';
 import BikeHeader from '../components/BikeHeader.vue';
 
 export default {
@@ -167,6 +168,23 @@ export default {
     },
     onBack() {
       this.isPreview = false;
+    },
+    onSendReport(reportId) {
+      const loading = this.$loading({
+        lock: true,
+        text: 'Sending',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+      });
+      sendReport(reportId).then(() => {
+        loading.close();
+        this.$message({
+          type: 'success',
+          message: 'Send report to email successful.',
+        });
+      }).catch(() => {
+        loading.close();
+      });
     },
   },
 };

@@ -14,3 +14,10 @@ export function deleteReport(reportId) {
     method: 'delete',
   });
 }
+
+export function sendReport(reportId) {
+  return request({
+    url: `/api/report/${reportId}`,
+    method: 'put',
+  });
+}

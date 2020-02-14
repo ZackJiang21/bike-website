@@ -4,7 +4,7 @@ import { Message} from 'element-ui';
 
 const request = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
-  timeout: 3000
+  timeout: 10000
 });
 
 request.interceptors.response.use(
