@@ -17,13 +17,6 @@
           Stop
           <span class="el-icon-switch-button el-icon--right"></span>
         </el-button>
-        <el-button
-          v-if="hasReport"
-          type="primary"
-          @click="getReport"
-        >
-          Generate Report
-        </el-button>
         <el-dropdown
           class="user-drop-down"
           v-if="hasRiderInfo"
@@ -416,7 +409,6 @@ export default {
   },
   data() {
     return {
-      hasReport: false,
       isShowFabric: true,
       resolution: {
         originVideoWidth: 180,
@@ -473,10 +465,6 @@ export default {
     window.onresize = this.calculateHeight;
   },
   methods: {
-    getReport() {
-      // generateReport(this.riderInfo, this.fittingData);
-      this.hasReport = false;
-    },
     onUserCommand(command) {
       if (command === 'logout') {
         this.hasRiderInfo = false;
@@ -883,13 +871,11 @@ export default {
     handleStartProcess() {
       this.clearFabricCanvas();
       this.isProcessing = true;
-      this.hasReport = false;
       socket.emit('start_process', 'start');
     },
     handleStop() {
       this.clearFabricCanvas();
       this.isProcessing = false;
-      this.hasReport = true;
       socket.emit('cancel_process', this.riderInfo);
     },
     reload() {
