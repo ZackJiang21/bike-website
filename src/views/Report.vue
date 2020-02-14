@@ -1,7 +1,7 @@
 <template>
   <div>
     <bike-header></bike-header>
-    <el-container class="report-container">
+    <el-container v-if="!isPreview" class="report-container">
       <el-aside :style="asideStyle">
         <el-menu
           :default-active="activeUserId"
@@ -53,6 +53,7 @@
                 <el-button
                   type="success"
                   size="mini"
+                  @click="onPreview(scope.row.id)"
                   plain>
                   Preview<i class="icon-el-icon-ali-preview el-icon--right"/>
                 </el-button>
@@ -69,6 +70,14 @@
         </el-main>
       </el-container>
     </el-container>
+    <div v-else class="report-container">
+      <el-page-header @back="onBack" content="Preview Report">
+      </el-page-header>
+      <iframe
+        :src="reportUri" width="100%" :height="pdfHeight">
+        This browser does not support PDFs.
+      </iframe>
+    </div>
   </div>
 </template>
 <script>
@@ -83,8 +92,11 @@ export default {
   data() {
     return {
       moment,
+      isPreview: false,
+      reportUri: '',
       tableHeight: 0,
       sideHeight: 0,
+      pdfHeight: 0,
       activeUserId: '',
       users: [],
       reportData: [],
@@ -120,11 +132,13 @@ export default {
     },
     calHeight() {
       const windowHeight = window.innerHeight;
+      const HEADER = 24;
       const PADDING_TOP = 80;
       const PADDING_BOTTOM = 50;
       const PADDING_MAIN = 40;
       this.sideHeight = windowHeight - PADDING_TOP - PADDING_BOTTOM;
       this.tableHeight = windowHeight - PADDING_TOP - PADDING_BOTTOM - PADDING_MAIN;
+      this.pdfHeight = windowHeight - PADDING_TOP - PADDING_BOTTOM - HEADER;
     },
     onSelectUser(userId) {
       this.activeUserId = userId;
@@ -146,6 +160,13 @@ export default {
       }).catch(() => {
         console.log('delete canceled');
       });
+    },
+    onPreview(reportId) {
+      this.isPreview = true;
+      this.reportUri = `http://10.111.137.125:5000/api/report/${reportId}`;
+    },
+    onBack() {
+      this.isPreview = false;
     },
   },
 };
