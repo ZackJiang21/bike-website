@@ -98,9 +98,7 @@ export default {
           this.users = res;
           if (res.length > 0) {
             this.activeUserId = String(res[0].id);
-            getReportByUserId(this.activeUserId).then((reports) => {
-              this.reportData = reports;
-            });
+            this.getReportData();
           }
         });
     });
@@ -115,6 +113,11 @@ export default {
     },
   },
   methods: {
+    getReportData() {
+      getReportByUserId(this.activeUserId).then((reports) => {
+        this.reportData = reports;
+      });
+    },
     calHeight() {
       const windowHeight = window.innerHeight;
       const PADDING_TOP = 80;
@@ -124,9 +127,8 @@ export default {
       this.tableHeight = windowHeight - PADDING_TOP - PADDING_BOTTOM - PADDING_MAIN;
     },
     onSelectUser(userId) {
-      getReportByUserId(userId).then((reports) => {
-        this.reportData = reports;
-      });
+      this.activeUserId = userId;
+      this.getReportData();
     },
     onDelReport(reportId) {
       this.$confirm('This will permanently delete the report. Continue?', 'Warning', {
@@ -139,7 +141,7 @@ export default {
             type: 'success',
             message: 'Delete completed',
           });
-          this.getUserData();
+          this.getReportData();
         });
       }).catch(() => {
         console.log('delete canceled');
