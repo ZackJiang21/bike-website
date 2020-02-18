@@ -871,12 +871,12 @@ export default {
     handleStartProcess() {
       this.clearFabricCanvas();
       this.isProcessing = true;
-      socket.emit('start_process', 'start');
+      socket.emit('start_process', this.riderInfo);
     },
     handleStop() {
       this.clearFabricCanvas();
       this.isProcessing = false;
-      socket.emit('cancel_process', this.riderInfo);
+      socket.emit('cancel_process');
     },
     reload() {
       this.isShowFabric = false;
